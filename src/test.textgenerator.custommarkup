@@ -13,7 +13,7 @@
 # " [ ] Blanks (MC)
 # " [ ] Conditional Jump
 # " [ ] @END
-# " [ ] Escapes
+# " [x] Escapes
 
 This is example text including *bold*, /italics/, and other fancifully styled text. Styles can even be */nested/*
 
@@ -66,6 +66,10 @@ You'll see this /italic/ text if you chose right.
 # @merge
 
 (You'll see this text regardless)
+
+# ---
+
+\\ \* \* \* \\
 
 # ---
 

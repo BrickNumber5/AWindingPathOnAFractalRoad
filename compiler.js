@@ -43,7 +43,7 @@ function compile( srcFile ) {
 }
 
 function parse( srcFile ) {
-  let tokens = [ ];
+  let tokens = [ { type: "reference", data: "START" } ];
   // Tokenize
   let sol = true, bold = false, ital = false, undr = false, strk = false, txt = "";
   let i = 0;
@@ -90,8 +90,39 @@ function parse( srcFile ) {
         }
         i++;
         tokens.push( { type: "jump", data: reference } );
-      } else if ( chr === "?" && srcFile[ i ] === "-" && srcFile[ i + 1 ] === ">" ) {
-        
+      } else if ( chr === "?" && srcFile[ i ] === "-" && srcFile[ i + 1 ] === ">" && srcFile[ i + 2 ] === " " && srcFile[ i + 3 ] === "@" ) {
+        i += 4;
+        let reference = "";
+        while ( i < srcFile.length && srcFile[ i ] !== "\n" ) {
+          reference += srcFile[ i ];
+          i++;
+        }
+        i++;
+        let branches = [ ];
+        while ( srcFile[ i ] === " " && srcFile[ i + 1 ] === " " && srcFile[ i + 2 ] === '"' ) {
+          i += 3;
+          let label = "";
+          while ( i < srcFile.length && srcFile[ i ] !== '"' ) {
+            if ( srcFile[ i ] === "\\" ) {
+              i++;
+            }
+            label += srcFile[ i ];
+            i++;
+          }
+          i++;
+          if ( srcFile[ i ] !== " " || srcFile[ i + 1 ] !== "-" || srcFile[ i + 2 ] !== ">" || srcFile[ i + 3 ] !== " " || srcFile[ i + 4 ] !== "@" ) {
+            throw "!";
+          }
+          i += 5;
+          let ref = "";
+          while ( i < srcFile.length && srcFile[ i ] !== "\n" ) {
+            ref += srcFile[ i ];
+            i++;
+          }
+          i++;
+          branches.push( { choice: label, goesto: ref } );
+        }
+        tokens.push( { type: "conditional_jump", data: { branches } } );
       } else {
         throw "!";
       }
@@ -135,14 +166,43 @@ function parse( srcFile ) {
       continue;
     }
     if ( srcFile[ i ] === "_" ) {
-      undr = !undr;
-      if ( txt.length > 0 ) {
-        tokens.push( { type: "text", data: txt } );
-        txt = "";
-      }
-      tokens.push( { type: undr ? "underline_start" : "underline_end" } );
       sol = false;
       i++;
+      if ( srcFile[ i ] === "_" ) {
+        i++;
+        if ( srcFile[ i ] !== "@" ) throw "!";
+        i++;
+        let reference = "";
+        while ( i < srcFile.length && srcFile[ i ] !== ":" ) {
+          reference += srcFile[ i ];
+          i++;
+        }
+        if ( srcFile[ i + 1 ] !== '"' ) throw "!";
+        let labels = [ ];
+        do {
+          let label = "";
+          i += 2;
+          while ( i < srcFile.length && srcFile[ i ] !== '"' ) {
+            if ( srcFile[ i ] === "\\" ) {
+              i++;
+            }
+            label += srcFile[ i ];
+            i++;
+          }
+          i++;
+          labels.push( label );
+        } while ( srcFile[ i ] === "," );
+        if ( srcFile[ i ] !== "_" || srcFile[ i + 1 ] !== "_" ) throw "!";
+        i += 2;
+        tokens.push( { type: "blank_mc", data: { reference, options: labels } } );
+      } else {
+        undr = !undr;
+        if ( txt.length > 0 ) {
+          tokens.push( { type: "text", data: txt } );
+          txt = "";
+        }
+        tokens.push( { type: undr ? "underline_start" : "underline_end" } );
+      }
       continue;
     }
     if ( srcFile[ i ] === "~" ) {
@@ -155,6 +215,9 @@ function parse( srcFile ) {
       sol = false;
       i++;
       continue;
+    }
+    if ( srcFile[ i ] === "\\" ) {
+      i++;
     }
     txt += srcFile[ i ];
     sol = false;

@@ -1,0 +1,74 @@
+# ! Chapter 1
+
+# " TODO: 
+# " [ ] Comments
+# " [ ] Chapter Titles
+# " [ ] Bold
+# " [ ] Italics
+# " [ ] Underline
+# " [ ] Strikethrough
+# " [ ] End of Page
+# " [ ] References
+# " [ ] Unconditional Jump
+# " [ ] Blanks (MC)
+# " [ ] Conditional Jump
+# " [ ] @END
+# " [ ] Escapes
+
+This is example text including *bold*, /italics/, and other fancifully styled text.
+
+# ---
+
+This is the second page.
+
+# ---
+
+Here on this page there is an unreadable blank where the user fills in: __@blank:"left","right"__. Its options are "left" and "right".
+
+# -> @skip
+
+Since this section is behind a jump that jumps past it, it is unreachable.
+
+# @skip
+
+The formatting options available also include _underlined_ text and ~crossed out~ text.
+
+# ---
+
+This page has two (2) "paragraphs" on it.
+
+Here's the second one.
+
+# ---
+
+# ---
+
+The previous page was blank.
+
+# ---
+
+# ?-> @blank
+  "left" -> @left
+  "right" -> @right
+
+# @left
+
+You'll see this *bold* text if you chose left.
+
+# -> @merge
+
+# @right
+
+You'll see this /italic/ text if you chose right.
+
+# -> @merge
+
+# @merge
+
+(You'll see this text regardless)
+
+# ---
+
+This is the final page.
+
+# -> @END

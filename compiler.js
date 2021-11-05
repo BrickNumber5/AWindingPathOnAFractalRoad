@@ -6,7 +6,7 @@ const re = /^(.+)\.textgenerator\.custommarkup$/;
 
 let srcFiles = fs.readdirSync( "./src" );
 
-srcFiles.forEach( ( file, i ) => { let m = re.exec( file ); if ( m !== null ) compileFile( m[ 1 ] ); } );
+srcFiles.forEach( ( file, i ) => { let m = re.exec( file ); if ( m !== null ) compileFile( m[ 1 ], i, srcFiles.length ); } );
 
 function compileFile( name, num = 0, max = 1 ) {
   const srcFileName = `./src/${ name }.textgenerator.custommarkup`;
@@ -28,5 +28,20 @@ function compileFile( name, num = 0, max = 1 ) {
 }
 
 function compile( srcFile ) {
-  return "// TODO";
+  let res = "";
+  res += 'import * as template from "./template.textgenerator.js"\n\n';
+  res += "function* gen( ) {\n";
+  res += "  const { TOKEN, PlainNode, BoldNode, ItalicNode, UnderlinedNode, StrikedNode, TitleNode, MCBlankNode } = template;\n";
+  
+  let ast = parse( srcFile );
+  console.log( "DEBUG" );
+  console.log( ast );
+  
+  res += "}\n\n";
+  res += "export default textgenerator = new template.TextGenerator( gen );";
+  return res;
+}
+
+function parse( srcFile ) {
+  return { };
 }

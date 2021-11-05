@@ -15,7 +15,7 @@
 # " [ ] @END
 # " [ ] Escapes
 
-This is example text including *bold*, /italics/, and other fancifully styled text.
+This is example text including *bold*, /italics/, and other fancifully styled text. Styles can even be */nested/*
 
 # ---
 

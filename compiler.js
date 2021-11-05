@@ -30,15 +30,67 @@ function compileFile( name, num = 0, max = 1 ) {
 function compile( srcFile ) {
   let res = "";
   res += 'import * as template from "./template.textgenerator.js"\n\n';
-  res += "function* root( ) {\n";
-  res += "  const { TOKEN } = template;\n  \n";
   
-  let ast = parse( srcFile );
+  let parsed = parse( srcFile );
   console.log( "DEBUG" );
-  console.log( ast );
+  console.log( parsed );
   
-  res += "}\n\n";
-  res += "export default textgenerator = new template.TextGenerator( root );";
+  if ( parsed.variables.length > 0 ) {
+    res += `const ${ parsed.variables.join( ", " ) };\n\n`;
+  }
+  
+  for ( let i = 0; i < parsed.functions.length; i++ ) {
+    const { name, tokens } = parsed.functions[ i ];
+    res += `function* ${ name }( ) {\n`;
+    res += "  const { TOKEN } = template;\n  \n";
+    for ( let j = 0; j < tokens.length; j++ ) {
+      const { type, data } = tokens[ j ];
+      if ( type === "page_start" ) {
+        res += "  yield TOKEN.PAGE_START;\n";
+      } else if ( type === "page_end" ) {
+        res += "  yield TOKEN.PAGE_END;\n";
+      } else if ( type === "paragraph_start" ) {
+        res += "  yield TOKEN.PARA_START;\n";
+      } else if ( type === "paragraph_end" ) {
+        res += "  yield TOKEN.PARA_END;\n";
+      } else if ( type === "title" ) {
+        res += `  yield [ TOKEN.TITLE, ${ JSON.stringify( data ) } ];\n`;
+      } else if ( type === "text" ) {
+        res += `  yield [ TOKEN.TEXT, ${ JSON.stringify( data ) } ];\n`;
+      } else if ( type === "bold_start" ) {
+        res += "  yield TOKEN.BOLD_START;\n";
+      } else if ( type === "bold_end" ) {
+        res += "  yield TOKEN.BOLD_END;\n";
+      } else if ( type === "italic_start" ) {
+        res += "  yield TOKEN.ITALIC_START;\n";
+      } else if ( type === "italic_end" ) {
+        res += "  yield TOKEN.ITALIC_END;\n";
+      } else if ( type === "underline_start" ) {
+        res += "  yield TOKEN.UNDERLINE_START;\n";
+      } else if ( type === "underline_end" ) {
+        res += "  yield TOKEN.UNDERLINE_END;\n";
+      } else if ( type === "striked_start" ) {
+        res += "  yield TOKEN.STRIKED_START;\n";
+      } else if ( type === "striked_end" ) {
+        res += "  yield TOKEN.STRIKED_END;\n";
+      } else if ( type === "blank_mc" ) {
+        res += `  yield [ TOKEN.BLANK_MC, [ ${ data.options.map( o => JSON.stringify( o ) ).join( ", " ) } ], $result => { ${ data.reference } = $result; } ];\n`;
+      } else if ( type === "jump" ) {
+        res += `  yield* ${ data }( );\n`;
+      } else if ( type === "conditional_jump" ) {
+        res += "  " + data.branches.map(
+          b => `if ( ${ data.reference } === ${ JSON.stringify( b.choice ) } ) {\n    yield* ${ b.goesto }( );\n  }`
+        ).join( " else " ) + "\n";
+      } else {
+        console.log( res );
+        console.log( type );
+        throw "!";
+      }
+    }
+    res += "}\n\n";
+  }
+  
+  res += "export default textgenerator = new template.TextGenerator( START );";
   return res;
 }
 
@@ -122,7 +174,7 @@ function parse( srcFile ) {
           i++;
           branches.push( { choice: label, goesto: ref } );
         }
-        tokens.push( { type: "conditional_jump", data: { branches } } );
+        tokens.push( { type: "conditional_jump", data: { reference, branches } } );
       } else {
         throw "!";
       }
@@ -223,5 +275,67 @@ function parse( srcFile ) {
     sol = false;
     i++;
   }
-  return tokens;
+  
+  let currentFunctionTokens, currentFunctionName = null;
+  let functions = [ ];
+  let variables = [ ];
+  
+  for ( let i = 0; i < tokens.length; i++ ) {
+    let token = tokens[ i ];
+    if ( token.type === "reference" ) {
+      if ( currentFunctionName ) {
+        currentFunctionTokens.push( { type: "jump", data: token.data } );
+        functions.push( { name: currentFunctionName, tokens: currentFunctionTokens } );
+      }
+      currentFunctionTokens = [ ], currentFunctionName = token.data;
+      if ( token.data === "START" ) {
+        currentFunctionTokens.push( { type: "page_start" } );
+        currentFunctionTokens.push( { type: "paragraph_start" } );
+      }
+    } else if ( token.type === "comment" ) {
+      // Do Nothing
+    } else {
+      if ( currentFunctionName === null ) continue;
+      if ( [
+        "text",
+        "title",
+        "bold_start", "bold_end",
+        "italic_start", "italic_end",
+        "underline_start", "underline_end",
+        "striked_start", "striked_end"
+      ].includes( token.type ) ) {
+        currentFunctionTokens.push( token );
+      } else {
+        if ( token.type === "jump" ) {
+          if ( token.data === "END" ) {
+            currentFunctionTokens.push( { type: "paragraph_end" } );
+            currentFunctionTokens.push( { type: "page_end" } );
+          } else {
+            currentFunctionTokens.push( token );
+          }
+          functions.push( { name: currentFunctionName, tokens: currentFunctionTokens } );
+          currentFunctionName = null;
+        } else if ( token.type === "conditional_jump" ) {
+          currentFunctionTokens.push( token );
+          functions.push( { name: currentFunctionName, tokens: currentFunctionTokens } );
+          currentFunctionName = null;
+        } else if ( token.type === "blank_mc" ) {
+          variables.push( token.data.reference );
+          currentFunctionTokens.push( token );
+        } else if ( token.type === "next_page" ) {
+          currentFunctionTokens.push( { type: "paragraph_end" } );
+          currentFunctionTokens.push( { type: "page_end" } );
+          currentFunctionTokens.push( { type: "page_start" } );
+          currentFunctionTokens.push( { type: "paragraph_start" } );
+        } else if ( token.type === "next_paragraph" ) {
+          currentFunctionTokens.push( { type: "paragraph_end" } );
+          currentFunctionTokens.push( { type: "paragraph_start" } );
+        } else {
+          throw "!";
+        }
+      }
+    }
+  }
+  
+  return { functions, variables };
 }

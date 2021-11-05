@@ -1,18 +1,18 @@
 # ! Chapter 1
 
 # " TODO: 
-# " [ ] Comments
-# " [ ] Chapter Titles
-# " [ ] Bold
-# " [ ] Italics
-# " [ ] Underline
-# " [ ] Strikethrough
-# " [ ] End of Page
-# " [ ] References
+# " [x] Comments
+# " [x] Chapter Titles
+# " [x] Bold
+# " [x] Italics
+# " [x] Underline
+# " [x] Strikethrough
+# " [x] End of Page
+# " [x] References
 # " [ ] Unconditional Jump
-# " [ ] Blanks (MC)
+# " [x] Blanks (MC)
 # " [ ] Conditional Jump
-# " [ ] @END
+# " [x] @END
 # " [x] Escapes
 
 This is example text including *bold*, /italics/, and other fancifully styled text. Styles can even be */nested/*

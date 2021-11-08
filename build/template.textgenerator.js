@@ -47,7 +47,7 @@ export class TextGenerator {
       if ( type === TOKEN.END ) {
         let page = document.createElement( "div" );
         page.className = "page";
-        page.dataset.number = this.page_num;
+        page.dataset.number = this.page_num + 1;
         page.dataset.last = true;
         // Special Final Page goes here
         return page;
@@ -60,7 +60,7 @@ export class TextGenerator {
       if ( type === TOKEN.PAGE_START ) {
         let page = document.createElement( "div" );
         page.className = "page";
-        page.dataset.number = this.page_num;
+        page.dataset.number = this.page_num + 1;
         page.dataset.last = false;
         this.page_num++;
         elements_stack.push( page );

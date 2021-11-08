@@ -69,17 +69,20 @@ function rerender( ) {
   textgen.start( );
   for ( let i = 1; i <= page; i++ ) {
     pages[ i ] = textgen.nextPage( );
+    pages[ i ].style.display = ( page - i <= 1 ) ? "" : "none";
+    container.insertBefore( pages[ i ], prevPageButton );
   }
 }
 
 function resolveMC( blank, options, resolveFn ) {
-  blankMC = { blank, options, resolve: v => {
-    blank.dataset.unresolved = false;
-    blank.dataset.filled = v;
+  blankMC = { options, resolve: v => {
     resolveFn( v );
     optionsbar.style.display = "none";
-    checkResolved( );
     rerender( );
+    let blank = container.querySelector( ".blank" ); //TODO: Refactor this so it actually works when there is more than one blank
+    blank.dataset.unresolved = false;
+    blank.dataset.filled = v;
+    checkResolved( );
   } };
   optionsbar.style.display = "";
   while ( optionsbar.firstChild ) {

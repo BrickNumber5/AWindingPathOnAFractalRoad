@@ -4,9 +4,9 @@ const fs = require( "fs" );
 
 const re = /^(.+)\.textgenerator\.custommarkup$/;
 
-let srcFiles = fs.readdirSync( "./src" );
+let srcFiles = fs.readdirSync( "./src" ).filter( f => re.test( f ) );
 
-srcFiles.forEach( ( file, i ) => { let m = re.exec( file ); if ( m !== null ) compileFile( m[ 1 ], i, srcFiles.length ); } );
+srcFiles.forEach( ( file, i ) => compileFile( re.exec( file )[ 1 ], i, srcFiles.length ) );
 
 function compileFile( name, num = 0, max = 1 ) {
   const srcFileName = `./src/${ name }.textgenerator.custommarkup`;
@@ -14,10 +14,8 @@ function compileFile( name, num = 0, max = 1 ) {
   console.log( `Processing ${ name }          [${ num + 1 }/${ max }]` );
   console.log( `Reading ${ srcFileName }` );
   const srcFile = fs.readFileSync( srcFileName ).toString( );
-  console.log( "DEBUG", "\n```\n" + srcFile + "\n```\n"  );
   console.log( `Compiling` );
   const resFile = compile( srcFile );
-  console.log( "DEBUG", "\n```\n" + resFile + "\n```\n" );
   console.log( `Writing ${ resFileName }` );
   try {
     fs.unlinkSync( resFileName );
@@ -33,8 +31,6 @@ function compile( srcFile ) {
   res += "const { TOKEN } = template;\n\n";
   
   let parsed = parse( srcFile );
-  console.log( "DEBUG" );
-  console.log( parsed );
   
   if ( parsed.variables.length > 0 ) {
     res += `let ${ parsed.variables.join( '= "", ' ) } = "";\n\n`;

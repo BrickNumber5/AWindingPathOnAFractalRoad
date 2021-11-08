@@ -100,8 +100,8 @@ export class TextGenerator {
       if ( type === TOKEN.BLANK_MC ) {
         let blank = document.createElement( "button" );
         blank.className = "blank";
-        //TODO
         blank.dataset.unresolved = true;
+        blank.onclick = resolveMC.bind( null, blank, ops[ 0 ], ops[ 1 ] );
         elements_stack.at( -1 ).appendChild( blank );
         continue;
       }

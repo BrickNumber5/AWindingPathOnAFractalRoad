@@ -100,7 +100,7 @@ function compile( name, srcFile ) {
     res += "}\n\n";
   }
   
-  res += "export default textgenerator = new template.TextGenerator( START );";
+  res += "export default new template.TextGenerator( START );";
   
   return { resFile: res, dotFile: generateDotFile( name, parsed ) };
 }

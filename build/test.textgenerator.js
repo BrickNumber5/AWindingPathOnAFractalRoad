@@ -117,4 +117,4 @@ function* merge( ) {
   return TOKEN.END
 }
 
-export default textgenerator = new template.TextGenerator( START );
+export default new template.TextGenerator( START );

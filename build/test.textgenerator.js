@@ -75,8 +75,6 @@ function* skip( ) {
   } else if ( blank === "right" ) {
     yield* right( );
     return TOKEN.END;
-  } else if ( blank === "someothersillyoptionthatwon'tcomeupbecausethethingonlyhastwochoices" ) {
-    return TOKEN.END;
   } else {
     return TOKEN.END;
   }

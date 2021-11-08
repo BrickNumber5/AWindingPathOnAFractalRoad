@@ -50,7 +50,6 @@ The previous page was blank.
 # ?-> @blank
   "left" -> @left
   "right" -> @right
-  "someothersillyoptionthatwon'tcomeupbecausethethingonlyhastwochoices" -> @END
 
 # @left
 

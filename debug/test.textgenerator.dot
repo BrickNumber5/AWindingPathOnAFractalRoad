@@ -1,0 +1,10 @@
+digraph test {
+  rankdir = "LR"
+  START -> skip
+  skip -> left
+  skip -> right
+  skip -> END [style=dashed,color=gray]
+  left -> merge
+  right -> merge
+  merge -> END
+}

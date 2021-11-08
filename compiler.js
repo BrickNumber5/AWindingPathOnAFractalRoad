@@ -10,12 +10,13 @@ srcFiles.forEach( ( file, i ) => compileFile( re.exec( file )[ 1 ], i, srcFiles.
 
 function compileFile( name, num = 0, max = 1 ) {
   const srcFileName = `./src/${ name }.textgenerator.custommarkup`;
-  const resFileName = `./build/${ name }.textgenerator.js`
+  const resFileName = `./build/${ name }.textgenerator.js`;
+  const dotFileName = `./debug/${ name }.textgenerator.dot`;
   console.log( `Processing ${ name }          [${ num + 1 }/${ max }]` );
   console.log( `Reading ${ srcFileName }` );
   const srcFile = fs.readFileSync( srcFileName ).toString( );
   console.log( `Compiling` );
-  const resFile = compile( srcFile );
+  const { resFile, dotFile } = compile( name, srcFile );
   console.log( `Writing ${ resFileName }` );
   try {
     fs.unlinkSync( resFileName );
@@ -23,14 +24,21 @@ function compileFile( name, num = 0, max = 1 ) {
     // Do nothing, if it errors that just means the file doesn't exist.
   }
   fs.writeFileSync( resFileName, resFile );
+  console.log( `Writing ${ dotFileName }` );
+  try {
+    fs.unlinkSync( dotFileName );
+  } catch ( e ) {
+    // Do nothing, if it errors that just means the file doesn't exist.
+  }
+  fs.writeFileSync( dotFileName, dotFile );
 }
 
-function compile( srcFile ) {
+function compile( name, srcFile ) {
+  let parsed = parse( srcFile );
+  
   let res = "";
   res += 'import * as template from "./template.textgenerator.js"\n\n';
   res += "const { TOKEN } = template;\n\n";
-  
-  let parsed = parse( srcFile );
   
   if ( parsed.variables.length > 0 ) {
     res += `let ${ parsed.variables.join( '= "", ' ) } = "";\n\n`;
@@ -93,7 +101,8 @@ function compile( srcFile ) {
   }
   
   res += "export default textgenerator = new template.TextGenerator( START );";
-  return res;
+  
+  return { resFile: res, dotFile: generateDotFile( name, parsed ) };
 }
 
 function parse( srcFile ) {
@@ -285,6 +294,7 @@ function parse( srcFile ) {
   let currentFunctionTokens, currentFunctionName = null;
   let functions = [ ];
   let variables = [ ];
+  let links = [ ];
   
   for ( let i = 0; i < tokens.length; i++ ) {
     let token = tokens[ i ];
@@ -319,10 +329,16 @@ function parse( srcFile ) {
           }
           currentFunctionTokens.push( token );
           functions.push( { name: currentFunctionName, tokens: currentFunctionTokens } );
+          links.push( { from: currentFunctionName, to: token.data, implied: false } );
           currentFunctionName = null;
         } else if ( token.type === "conditional_jump" ) {
           currentFunctionTokens.push( token );
           functions.push( { name: currentFunctionName, tokens: currentFunctionTokens } );
+          let goestoend = false;
+          token.data.branches.forEach( b => {
+            if ( b.goesto === "END" ) { goestoend = true; } else { links.push( { from: currentFunctionName, to: b.goesto, implied: false } ); }
+          } );
+          links.push( { from: currentFunctionName, to: "END", implied: !goestoend } );
           currentFunctionName = null;
         } else if ( token.type === "blank_mc" ) {
           variables.push( token.data.reference );
@@ -342,5 +358,15 @@ function parse( srcFile ) {
     }
   }
   
-  return { functions, variables };
+  return { functions, variables, links };
+}
+
+function generateDotFile( name, parsed ) {
+  const { links } = parsed;
+  let dot = "";
+  dot += `digraph ${ name } {\n`;
+  dot += '  rankdir = "LR"\n';
+  dot += links.map( l => `  ${ l.from } -> ${ l.to }${ l.implied ? " [style=dashed,color=gray]" : "" }\n` ).join( "" );
+  dot += "}";
+  return dot;
 }

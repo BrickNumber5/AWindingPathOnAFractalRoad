@@ -5,6 +5,7 @@ export class TextGenerator {
 }
 
 export const TOKEN = {
+  END: -1,
   TEXT: 0,
   PAGE_START: 1,
   PAGE_END: 2,
@@ -19,5 +20,5 @@ export const TOKEN = {
   STRIKED_START: 11,
   STRIKED_END: 12,
   TITLE: 13,
-  BLANK_MC: 14
+  BLANK_MC: 14,
 };

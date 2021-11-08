@@ -30,19 +30,19 @@ function compileFile( name, num = 0, max = 1 ) {
 function compile( srcFile ) {
   let res = "";
   res += 'import * as template from "./template.textgenerator.js"\n\n';
+  res += "const { TOKEN } = template;\n\n";
   
   let parsed = parse( srcFile );
   console.log( "DEBUG" );
   console.log( parsed );
   
   if ( parsed.variables.length > 0 ) {
-    res += `const ${ parsed.variables.join( ", " ) };\n\n`;
+    res += `let ${ parsed.variables.join( '= "", ' ) } = "";\n\n`;
   }
   
   for ( let i = 0; i < parsed.functions.length; i++ ) {
     const { name, tokens } = parsed.functions[ i ];
     res += `function* ${ name }( ) {\n`;
-    res += "  const { TOKEN } = template;\n  \n";
     for ( let j = 0; j < tokens.length; j++ ) {
       const { type, data } = tokens[ j ];
       if ( type === "page_start" ) {
@@ -76,11 +76,17 @@ function compile( srcFile ) {
       } else if ( type === "blank_mc" ) {
         res += `  yield [ TOKEN.BLANK_MC, [ ${ data.options.map( o => JSON.stringify( o ) ).join( ", " ) } ], $result => { ${ data.reference } = $result; } ];\n`;
       } else if ( type === "jump" ) {
-        res += `  yield* ${ data }( );\n`;
+        if ( data === "END" ) {
+          res += `  return TOKEN.END\n`;
+        } else {
+          res += `  yield* ${ data }( );\n  return TOKEN.END;\n`;
+        }
       } else if ( type === "conditional_jump" ) {
         res += "  " + data.branches.map(
-          b => `if ( ${ data.reference } === ${ JSON.stringify( b.choice ) } ) {\n    yield* ${ b.goesto }( );\n  }`
-        ).join( " else " ) + "\n";
+          b => `if ( ${ data.reference } === ${ JSON.stringify( b.choice ) } ) {\n${
+            b.goesto === "END" ? "" :  `    yield* ${ b.goesto }( );\n`
+          }    return TOKEN.END;\n  }`
+        ).join( " else " ) + " else {\n    return TOKEN.END;\n  }\n";
       } else {
         console.log( res );
         console.log( type );
@@ -221,6 +227,10 @@ function parse( srcFile ) {
       sol = false;
       i++;
       if ( srcFile[ i ] === "_" ) {
+        if ( txt.length > 0 ) {
+          tokens.push( { type: "text", data: txt } );
+          txt = "";
+        }
         i++;
         if ( srcFile[ i ] !== "@" ) throw "!";
         i++;
@@ -310,9 +320,8 @@ function parse( srcFile ) {
           if ( token.data === "END" ) {
             currentFunctionTokens.push( { type: "paragraph_end" } );
             currentFunctionTokens.push( { type: "page_end" } );
-          } else {
-            currentFunctionTokens.push( token );
           }
+          currentFunctionTokens.push( token );
           functions.push( { name: currentFunctionName, tokens: currentFunctionTokens } );
           currentFunctionName = null;
         } else if ( token.type === "conditional_jump" ) {

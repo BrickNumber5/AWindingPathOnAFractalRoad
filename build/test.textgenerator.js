@@ -1,10 +1,10 @@
 import * as template from "./template.textgenerator.js"
 
-const blank;
+const { TOKEN } = template;
+
+let blank = "";
 
 function* START( ) {
-  const { TOKEN } = template;
-  
   yield TOKEN.PAGE_START;
   yield TOKEN.PARA_START;
   yield [ TOKEN.TITLE, "Chapter 1" ];
@@ -31,14 +31,14 @@ function* START( ) {
   yield TOKEN.PAGE_END;
   yield TOKEN.PAGE_START;
   yield TOKEN.PARA_START;
+  yield [ TOKEN.TEXT, "Here on this page there is an unreadable blank where the user fills in: " ];
   yield [ TOKEN.BLANK_MC, [ "left", "right" ], $result => { blank = $result; } ];
-  yield [ TOKEN.TEXT, "Here on this page there is an unreadable blank where the user fills in: . Its options are \"left\" and \"right\"." ];
+  yield [ TOKEN.TEXT, ". Its options are \"left\" and \"right\"." ];
   yield* skip( );
+  return TOKEN.END;
 }
 
 function* skip( ) {
-  const { TOKEN } = template;
-  
   yield [ TOKEN.TEXT, "The formatting options available also include " ];
   yield TOKEN.UNDERLINE_START;
   yield [ TOKEN.TEXT, "underlined" ];
@@ -71,36 +71,38 @@ function* skip( ) {
   yield TOKEN.PARA_START;
   if ( blank === "left" ) {
     yield* left( );
+    return TOKEN.END;
   } else if ( blank === "right" ) {
     yield* right( );
+    return TOKEN.END;
+  } else if ( blank === "someothersillyoptionthatwon'tcomeupbecausethethingonlyhastwochoices" ) {
+    return TOKEN.END;
+  } else {
+    return TOKEN.END;
   }
 }
 
 function* left( ) {
-  const { TOKEN } = template;
-  
   yield [ TOKEN.TEXT, "You'll see this " ];
   yield TOKEN.BOLD_START;
   yield [ TOKEN.TEXT, "bold" ];
   yield TOKEN.BOLD_END;
   yield [ TOKEN.TEXT, " text if you chose left." ];
   yield* merge( );
+  return TOKEN.END;
 }
 
 function* right( ) {
-  const { TOKEN } = template;
-  
   yield [ TOKEN.TEXT, "You'll see this " ];
   yield TOKEN.ITALIC_START;
   yield [ TOKEN.TEXT, "italic" ];
   yield TOKEN.ITALIC_END;
   yield [ TOKEN.TEXT, " text if you chose right." ];
   yield* merge( );
+  return TOKEN.END;
 }
 
 function* merge( ) {
-  const { TOKEN } = template;
-  
   yield [ TOKEN.TEXT, "(You'll see this text regardless)" ];
   yield TOKEN.PARA_END;
   yield TOKEN.PAGE_END;
@@ -114,6 +116,7 @@ function* merge( ) {
   yield [ TOKEN.TEXT, "This is the final page." ];
   yield TOKEN.PARA_END;
   yield TOKEN.PAGE_END;
+  return TOKEN.END
 }
 
 export default textgenerator = new template.TextGenerator( START );

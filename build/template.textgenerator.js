@@ -101,6 +101,7 @@ export class TextGenerator {
         let blank = document.createElement( "button" );
         blank.className = "blank";
         //TODO
+        blank.dataset.unresolved = true;
         elements_stack.at( -1 ).appendChild( blank );
         continue;
       }

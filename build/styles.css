@@ -19,6 +19,42 @@ body {
   gap: 1.5rem;
 }
 
+.prevPageButton {
+  position: absolute;
+  left: -2rem;
+  top: 20%;
+  height: 60%;
+  width: 4rem;
+  display: block;
+  background-color: #ccca;
+}
+
+.prevPageButton:not(:disabled) {
+  cursor: pointer;
+}
+
+.prevPageButton:disabled {
+  background-color: #2226;
+}
+
+.nextPageButton {
+  position: absolute;
+  right: -2rem;
+  top: 20%;
+  height: 60%;
+  width: 4rem;
+  display: block;
+  background-color: #ccca;
+}
+
+.nextPageButton:disabled {
+  background-color: #2226;
+}
+
+.nextPageButton:not(:disabled) {
+  cursor: pointer;
+}
+
 .page {
   position: relative;
   display: block;
@@ -71,5 +107,8 @@ p {
 }
 
 .blank {
-  
+  display: inline-block;
+  background-color: black;
+  width: 5rem;
+  height: 1.5rem;
 }

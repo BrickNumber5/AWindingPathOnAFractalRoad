@@ -64,7 +64,7 @@ function checkResolved( ) {
 }
 
 function rerender( ) {
-  document.querySelectorAll( ".container .page" ).forEach( p => p.parentNode.removeChild( p ) );
+  document.querySelectorAll( ".container .page:not([data-first])" ).forEach( p => p.parentNode.removeChild( p ) );
   pages = [ document.querySelector( ".page" ) ];
   textgen.start( );
   for ( let i = 1; i <= page; i++ ) {
@@ -74,14 +74,11 @@ function rerender( ) {
   }
 }
 
-function resolveMC( blank, options, resolveFn ) {
+function resolveMC( blank, options, resolveFn, getFn ) {
   blankMC = { options, resolve: v => {
     resolveFn( v );
     optionsbar.style.display = "none";
     rerender( );
-    let blank = container.querySelector( ".blank" ); //TODO: Refactor this so it actually works when there is more than one blank
-    blank.dataset.unresolved = false;
-    blank.dataset.filled = v;
     checkResolved( );
   } };
   optionsbar.style.display = "";

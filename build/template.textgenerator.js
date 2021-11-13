@@ -98,10 +98,16 @@ export class TextGenerator {
         continue;
       }
       if ( type === TOKEN.BLANK_MC ) {
+        const [ options, resolveFn, getFn ] = ops;
         let blank = document.createElement( "button" );
         blank.className = "blank";
-        blank.dataset.unresolved = true;
-        blank.onclick = resolveMC.bind( null, blank, ops[ 0 ], ops[ 1 ] );
+        let v = getFn( );
+        if ( v === "" ) {
+          blank.dataset.unresolved = true;
+        } else {
+          blank.dataset.filled = v;
+        }
+        blank.onclick = resolveMC.bind( null, blank, options, resolveFn, getFn );
         elements_stack.at( -1 ).appendChild( blank );
         continue;
       }

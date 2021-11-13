@@ -41,7 +41,8 @@ function compile( name, srcFile ) {
   res += "const { TOKEN } = template;\n\n";
   
   if ( parsed.variables.length > 0 ) {
-    res += `let ${ parsed.variables.join( '= "", ' ) } = "";\n\n`;
+    res += `let ${ parsed.variables.join( ' = "", ' ) } = "";\n\n`;
+    res += `function reset( ) {\n  ${ parsed.variables.join( ' = "";\n  ' ) } = "";\n}\n\n`
   }
   
   for ( let i = 0; i < parsed.functions.length; i++ ) {
@@ -78,7 +79,9 @@ function compile( name, srcFile ) {
       } else if ( type === "striked_end" ) {
         res += "  yield TOKEN.STRIKED_END;\n";
       } else if ( type === "blank_mc" ) {
-        res += `  yield [ TOKEN.BLANK_MC, [ ${ data.options.map( o => JSON.stringify( o ) ).join( ", " ) } ], $result => { ${ data.reference } = $result; } ];\n`;
+        res += `  yield [ TOKEN.BLANK_MC, [ ${
+          data.options.map( o => JSON.stringify( o ) ).join( ", " )
+        } ], __$result => { ${ data.reference } = __$result; }, ( ) => ${ data.reference } ];\n`;
       } else if ( type === "jump" ) {
         if ( data === "END" ) {
           res += `  return TOKEN.END\n`;

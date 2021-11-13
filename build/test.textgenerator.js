@@ -4,6 +4,10 @@ const { TOKEN } = template;
 
 let blank = "";
 
+function reset( ) {
+  blank = "";
+}
+
 function* START( ) {
   yield TOKEN.PAGE_START;
   yield TOKEN.PARA_START;
@@ -32,7 +36,7 @@ function* START( ) {
   yield TOKEN.PAGE_START;
   yield TOKEN.PARA_START;
   yield [ TOKEN.TEXT, "Here on this page there is an unreadable blank where the user fills in: " ];
-  yield [ TOKEN.BLANK_MC, [ "left", "right" ], $result => { blank = $result; } ];
+  yield [ TOKEN.BLANK_MC, [ "left", "right" ], __$result => { blank = __$result; }, ( ) => blank ];
   yield [ TOKEN.TEXT, ". Its options are \"left\" and \"right\"." ];
   yield* skip( );
   return TOKEN.END;

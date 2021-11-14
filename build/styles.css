@@ -7,15 +7,15 @@ body {
 }
 
 .container {
+  --w: min( 40%, 30rem );
   display: flex;
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
-  min-width: min( calc( 100% - 5.5rem ), calc( 2 * 40rem + 5.5rem ) );
-  max-width: calc( 2 * 40rem + 5.5rem );
+  width: calc( 2 * var(--w) + 1.5rem );
   margin: 2rem;
-  justify-content: space-around;
+  justify-content: center;
   gap: 1.5rem;
 }
 
@@ -67,7 +67,7 @@ body {
   position: relative;
   display: block;
   background-color: white;
-  max-width: 40rem;
+  max-width: var(--w);
   flex: 1 1 0;
   padding: 1rem;
 }

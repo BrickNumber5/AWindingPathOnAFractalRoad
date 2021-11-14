@@ -153,10 +153,8 @@ function* merge( ) {
   } else if ( bin0 === "1" ) {
     yield* n1( );
     return TOKEN.END;
-  } else if ( bin0 === "" ) {
-    yield* nUnknown( );
-    return TOKEN.END;
   } else {
+    yield* nUnknown( );
     return TOKEN.END;
   }
 }
@@ -168,10 +166,8 @@ function* n0( ) {
   } else if ( bin1 === "1" ) {
     yield* n01( );
     return TOKEN.END;
-  } else if ( bin1 === "" ) {
-    yield* nUnknown( );
-    return TOKEN.END;
   } else {
+    yield* nUnknown( );
     return TOKEN.END;
   }
 }
@@ -183,10 +179,8 @@ function* n1( ) {
   } else if ( bin1 === "1" ) {
     yield* n11( );
     return TOKEN.END;
-  } else if ( bin1 === "" ) {
-    yield* nUnknown( );
-    return TOKEN.END;
   } else {
+    yield* nUnknown( );
     return TOKEN.END;
   }
 }
@@ -198,10 +192,8 @@ function* n00( ) {
   } else if ( bin2 === "1" ) {
     yield* n001( );
     return TOKEN.END;
-  } else if ( bin2 === "" ) {
-    yield* nUnknown( );
-    return TOKEN.END;
   } else {
+    yield* nUnknown( );
     return TOKEN.END;
   }
 }
@@ -213,10 +205,8 @@ function* n01( ) {
   } else if ( bin2 === "1" ) {
     yield* n011( );
     return TOKEN.END;
-  } else if ( bin2 === "" ) {
-    yield* nUnknown( );
-    return TOKEN.END;
   } else {
+    yield* nUnknown( );
     return TOKEN.END;
   }
 }
@@ -228,10 +218,8 @@ function* n10( ) {
   } else if ( bin2 === "1" ) {
     yield* n101( );
     return TOKEN.END;
-  } else if ( bin2 === "" ) {
-    yield* nUnknown( );
-    return TOKEN.END;
   } else {
+    yield* nUnknown( );
     return TOKEN.END;
   }
 }
@@ -243,10 +231,8 @@ function* n11( ) {
   } else if ( bin2 === "1" ) {
     yield* n111( );
     return TOKEN.END;
-  } else if ( bin2 === "" ) {
-    yield* nUnknown( );
-    return TOKEN.END;
   } else {
+    yield* nUnknown( );
     return TOKEN.END;
   }
 }
@@ -258,10 +244,8 @@ function* n000( ) {
   } else if ( bin3 === "1" ) {
     yield* n0001( );
     return TOKEN.END;
-  } else if ( bin3 === "" ) {
-    yield* nUnknown( );
-    return TOKEN.END;
   } else {
+    yield* nUnknown( );
     return TOKEN.END;
   }
 }
@@ -273,10 +257,8 @@ function* n001( ) {
   } else if ( bin3 === "1" ) {
     yield* n0011( );
     return TOKEN.END;
-  } else if ( bin3 === "" ) {
-    yield* nUnknown( );
-    return TOKEN.END;
   } else {
+    yield* nUnknown( );
     return TOKEN.END;
   }
 }
@@ -288,10 +270,8 @@ function* n010( ) {
   } else if ( bin3 === "1" ) {
     yield* n0101( );
     return TOKEN.END;
-  } else if ( bin3 === "" ) {
-    yield* nUnknown( );
-    return TOKEN.END;
   } else {
+    yield* nUnknown( );
     return TOKEN.END;
   }
 }
@@ -303,10 +283,8 @@ function* n011( ) {
   } else if ( bin3 === "1" ) {
     yield* n0111( );
     return TOKEN.END;
-  } else if ( bin3 === "" ) {
-    yield* nUnknown( );
-    return TOKEN.END;
   } else {
+    yield* nUnknown( );
     return TOKEN.END;
   }
 }
@@ -318,10 +296,8 @@ function* n100( ) {
   } else if ( bin3 === "1" ) {
     yield* n1001( );
     return TOKEN.END;
-  } else if ( bin3 === "" ) {
-    yield* nUnknown( );
-    return TOKEN.END;
   } else {
+    yield* nUnknown( );
     return TOKEN.END;
   }
 }
@@ -333,10 +309,8 @@ function* n101( ) {
   } else if ( bin3 === "1" ) {
     yield* n1011( );
     return TOKEN.END;
-  } else if ( bin3 === "" ) {
-    yield* nUnknown( );
-    return TOKEN.END;
   } else {
+    yield* nUnknown( );
     return TOKEN.END;
   }
 }
@@ -348,10 +322,8 @@ function* n110( ) {
   } else if ( bin3 === "1" ) {
     yield* n1101( );
     return TOKEN.END;
-  } else if ( bin3 === "" ) {
-    yield* nUnknown( );
-    return TOKEN.END;
   } else {
+    yield* nUnknown( );
     return TOKEN.END;
   }
 }
@@ -363,10 +335,8 @@ function* n111( ) {
   } else if ( bin3 === "1" ) {
     yield* n1111( );
     return TOKEN.END;
-  } else if ( bin3 === "" ) {
-    yield* nUnknown( );
-    return TOKEN.END;
   } else {
+    yield* nUnknown( );
     return TOKEN.END;
   }
 }

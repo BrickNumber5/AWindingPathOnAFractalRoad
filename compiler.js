@@ -90,10 +90,10 @@ function compile( name, srcFile ) {
         }
       } else if ( type === "conditional_jump" ) {
         res += "  " + data.branches.map(
-          b => `if ( ${ data.reference } === ${ JSON.stringify( b.choice ) } ) {\n${
+          b => ( b.choice === "" ? "" : `if ( ${ data.reference } === ${ JSON.stringify( b.choice ) } ) ` ) + `{\n${
             b.goesto === "END" ? "" :  `    yield* ${ b.goesto }( );\n`
           }    return TOKEN.END;\n  }`
-        ).join( " else " ) + " else {\n    return TOKEN.END;\n  }\n";
+        ).join( " else " ) + ( data.branches.filter( b => b.choice === "" ).length > 0 ? "\n" : " else {\n    return TOKEN.END;\n  }\n" );
       } else {
         console.log( res );
         console.log( type );
@@ -339,11 +339,12 @@ function parse( srcFile ) {
         } else if ( token.type === "conditional_jump" ) {
           currentFunctionTokens.push( token );
           functions.push( { name: currentFunctionName, tokens: currentFunctionTokens } );
-          let goestoend = false;
+          let goestoend = false, nodefault = true;
           token.data.branches.forEach( b => {
+            if ( b.choice === "" ) nodefault = false;
             if ( b.goesto === "END" ) { goestoend = true; } else { links.push( { from: currentFunctionName, to: b.goesto, implied: false } ); }
           } );
-          links.push( { from: currentFunctionName, to: "END", implied: !goestoend } );
+          if ( goestoend || nodefault ) links.push( { from: currentFunctionName, to: "END", implied: !goestoend } );
           currentFunctionName = null;
         } else if ( token.type === "blank_mc" ) {
           variables.push( token.data.reference );

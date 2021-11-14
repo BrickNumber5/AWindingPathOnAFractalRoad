@@ -9,63 +9,48 @@ digraph test {
   merge -> n0
   merge -> n1
   merge -> nUnknown
-  merge -> END [style=dashed,color=gray]
   n0 -> n00
   n0 -> n01
   n0 -> nUnknown
-  n0 -> END [style=dashed,color=gray]
   n1 -> n10
   n1 -> n11
   n1 -> nUnknown
-  n1 -> END [style=dashed,color=gray]
   n00 -> n000
   n00 -> n001
   n00 -> nUnknown
-  n00 -> END [style=dashed,color=gray]
   n01 -> n010
   n01 -> n011
   n01 -> nUnknown
-  n01 -> END [style=dashed,color=gray]
   n10 -> n100
   n10 -> n101
   n10 -> nUnknown
-  n10 -> END [style=dashed,color=gray]
   n11 -> n110
   n11 -> n111
   n11 -> nUnknown
-  n11 -> END [style=dashed,color=gray]
   n000 -> n0000
   n000 -> n0001
   n000 -> nUnknown
-  n000 -> END [style=dashed,color=gray]
   n001 -> n0010
   n001 -> n0011
   n001 -> nUnknown
-  n001 -> END [style=dashed,color=gray]
   n010 -> n0100
   n010 -> n0101
   n010 -> nUnknown
-  n010 -> END [style=dashed,color=gray]
   n011 -> n0110
   n011 -> n0111
   n011 -> nUnknown
-  n011 -> END [style=dashed,color=gray]
   n100 -> n1000
   n100 -> n1001
   n100 -> nUnknown
-  n100 -> END [style=dashed,color=gray]
   n101 -> n1010
   n101 -> n1011
   n101 -> nUnknown
-  n101 -> END [style=dashed,color=gray]
   n110 -> n1100
   n110 -> n1101
   n110 -> nUnknown
-  n110 -> END [style=dashed,color=gray]
   n111 -> n1110
   n111 -> n1111
   n111 -> nUnknown
-  n111 -> END [style=dashed,color=gray]
   n0000 -> merge2
   n0001 -> merge2
   n0010 -> merge2

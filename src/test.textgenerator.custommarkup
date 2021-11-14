@@ -85,6 +85,219 @@ Text that looks like the above is accomplished by writing "\\\\ \\\* \\\* \\\* \
 
 # ---
 
+This is a test of using multiple branches. Here filling in the following blanks will return the binary number represented.
+
+[__@bin0:"0","1"__, __@bin1:"0","1"__, __@bin2:"0","1"__, __@bin3:"0","1"__]
+
+# ?-> @bin0
+  "0" -> @n0
+  "1" -> @n1
+  "" -> @nUnknown
+
+# @n0
+
+# ?-> @bin1
+  "0" -> @n00
+  "1" -> @n01
+  "" -> @nUnknown
+
+# @n1
+
+# ?-> @bin1
+  "0" -> @n10
+  "1" -> @n11
+  "" -> @nUnknown
+
+# @n00
+
+# ?-> @bin2
+  "0" -> @n000
+  "1" -> @n001
+  "" -> @nUnknown
+
+# @n01
+
+# ?-> @bin2
+  "0" -> @n010
+  "1" -> @n011
+  "" -> @nUnknown
+
+# @n10
+
+# ?-> @bin2
+  "0" -> @n100
+  "1" -> @n101
+  "" -> @nUnknown
+
+# @n11
+
+# ?-> @bin2
+  "0" -> @n110
+  "1" -> @n111
+  "" -> @nUnknown
+
+# @n000
+
+# ?-> @bin3
+  "0" -> @n0000
+  "1" -> @n0001
+  "" -> @nUnknown
+
+# @n001
+
+# ?-> @bin3
+  "0" -> @n0010
+  "1" -> @n0011
+  "" -> @nUnknown
+
+# @n010
+
+# ?-> @bin3
+  "0" -> @n0100
+  "1" -> @n0101
+  "" -> @nUnknown
+
+# @n011
+
+# ?-> @bin3
+  "0" -> @n0110
+  "1" -> @n0111
+  "" -> @nUnknown
+
+# @n100
+
+# ?-> @bin3
+  "0" -> @n1000
+  "1" -> @n1001
+  "" -> @nUnknown
+
+# @n101
+
+# ?-> @bin3
+  "0" -> @n1010
+  "1" -> @n1011
+  "" -> @nUnknown
+
+# @n110
+
+# ?-> @bin3
+  "0" -> @n1100
+  "1" -> @n1101
+  "" -> @nUnknown
+
+# @n111
+
+# ?-> @bin3
+  "0" -> @n1110
+  "1" -> @n1111
+  "" -> @nUnknown
+
+# @n0000
+
+(0)
+
+# -> @merge2
+
+# @n0001
+
+(1)
+
+# -> @merge2
+
+# @n0010
+
+(2)
+
+# -> @merge2
+
+# @n0011
+
+(3)
+
+# -> @merge2
+
+# @n0100
+
+(4)
+
+# -> @merge2
+
+# @n0101
+
+(5)
+
+# -> @merge2
+
+# @n0110
+
+(6)
+
+# -> @merge2
+
+# @n0111
+
+(7)
+
+# -> @merge2
+
+# @n1000
+
+(8)
+
+# -> @merge2
+
+# @n1001
+
+(9)
+
+# -> @merge2
+
+# @n1010
+
+(10)
+
+# -> @merge2
+
+# @n1011
+
+(11)
+
+# -> @merge2
+
+# @n1100
+
+(12)
+
+# -> @merge2
+
+# @n1101
+
+(13)
+
+# -> @merge2
+
+# @n1110
+
+(14)
+
+# -> @merge2
+
+# @n1111
+
+(15)
+
+# -> @merge2
+
+# @nUnknown
+
+(???)
+
+# -> @merge2
+
+# @merge2
+
+# ---
+
 This is the final page.
 
 # -> @END

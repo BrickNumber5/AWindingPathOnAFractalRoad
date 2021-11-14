@@ -7,7 +7,7 @@ body {
 }
 
 .container {
-  --w: min( 40%, 30rem );
+  --w: min( 45%, 35rem );
   display: flex;
   position: absolute;
   top: 0;

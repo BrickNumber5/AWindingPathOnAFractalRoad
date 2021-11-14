@@ -55,7 +55,7 @@ function compile( name, srcFile ) {
       } else if ( type === "page_end" ) {
         res += "  yield TOKEN.PAGE_END;\n";
       } else if ( type === "paragraph_start" ) {
-        res += "  yield TOKEN.PARA_START;\n";
+        res += `  yield [ TOKEN.PARA_START, ${ data.toString( ) } ];\n`;
       } else if ( type === "paragraph_end" ) {
         res += "  yield TOKEN.PARA_END;\n";
       } else if ( type === "title" ) {
@@ -103,7 +103,7 @@ function compile( name, srcFile ) {
     res += "}\n\n";
   }
   
-  res += "export default new template.TextGenerator( START );";
+  res += `export default new template.TextGenerator( START${ parsed.variables.length > 0 ? ", reset" : "" } );`;
   
   return { resFile: res, dotFile: generateDotFile( name, parsed ) };
 }
@@ -146,7 +146,10 @@ function parse( srcFile ) {
         tokens.push( { type: "reference", data: reference } );
       } else if ( chr === "-" && srcFile[ i ] === "-" && srcFile[ i + 1 ] === "-" && srcFile[ i + 2 ] === "\n" ) {
         i += 3;
-        tokens.push( { type: "next_page" } );
+        tokens.push( { type: "next_page", data: false } );
+      } else if ( chr === "." && srcFile[ i ] === "." && srcFile[ i + 1 ] === "." && srcFile[ i + 2 ] === "\n" ) {
+        i += 3;
+        tokens.push( { type: "next_page", data: true } );
       } else if ( chr === "-" && srcFile[ i ] === ">" && srcFile[ i + 1 ] === " " && srcFile[ i + 2 ] === "@" ) {
         i += 3;
         let reference = "";
@@ -309,7 +312,7 @@ function parse( srcFile ) {
       currentFunctionTokens = [ ], currentFunctionName = token.data;
       if ( token.data === "START" ) {
         currentFunctionTokens.push( { type: "page_start" } );
-        currentFunctionTokens.push( { type: "paragraph_start" } );
+        currentFunctionTokens.push( { type: "paragraph_start", data: false } );
       }
     } else if ( token.type === "comment" ) {
       // Do Nothing
@@ -317,7 +320,6 @@ function parse( srcFile ) {
       if ( currentFunctionName === null ) continue;
       if ( [
         "text",
-        "title",
         "bold_start", "bold_end",
         "italic_start", "italic_end",
         "underline_start", "underline_end",
@@ -350,10 +352,18 @@ function parse( srcFile ) {
           currentFunctionTokens.push( { type: "paragraph_end" } );
           currentFunctionTokens.push( { type: "page_end" } );
           currentFunctionTokens.push( { type: "page_start" } );
-          currentFunctionTokens.push( { type: "paragraph_start" } );
+          currentFunctionTokens.push( { type: "paragraph_start", data: token.data } );
         } else if ( token.type === "next_paragraph" ) {
           currentFunctionTokens.push( { type: "paragraph_end" } );
-          currentFunctionTokens.push( { type: "paragraph_start" } );
+          currentFunctionTokens.push( { type: "paragraph_start", data: false } );
+        } else if ( token.type === "title" ) {
+          if ( currentFunctionTokens[ currentFunctionTokens.length - 1 ].type === "paragraph_start" ) {
+            currentFunctionTokens.pop( );
+          } else {
+            currentFunctionTokens.push( { type: "paragraph_end" } );
+          }
+          currentFunctionTokens.push( token );
+          currentFunctionTokens.push( { type: "paragraph_start", data: false } );
         } else {
           throw "!";
         }

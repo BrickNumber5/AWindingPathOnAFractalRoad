@@ -69,6 +69,7 @@ body {
   background-color: white;
   max-width: 40rem;
   flex: 1 1 0;
+  padding: 1rem;
 }
 
 .page::after {
@@ -83,9 +84,16 @@ body {
 
 p {
   display: block;
-  padding: 1rem;
   font-size: 1.5rem;
   text-align: justify;
+}
+
+p:not([data-continues="true"]) {
+  text-indent: 3rem;
+}
+
+p * {
+  text-indent: revert;
 }
 
 .title {
@@ -122,10 +130,16 @@ p {
   cursor: pointer;
 }
 
-.blank[data-filled]::after {
-  content: attr(data-filled);
+.blank::after {
+  display: block;
+  content: "\200B"; /* Zero width space to make spacing work, because css hates you. */
   color: white;
   text-align: center;
+  font-size: 0.75em;
+}
+
+.blank[data-filled]::after {
+  content: attr(data-filled);
 }
 
 .optionsbar {

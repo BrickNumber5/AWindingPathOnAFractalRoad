@@ -18,8 +18,9 @@ export const TOKEN = {
 };
 
 export class TextGenerator {
-  constructor( gen ) {
+  constructor( gen, resetFn ) {
     this.gen = gen;
+    this.resetFn = resetFn;
   }
   start( ) {
     this.runningGen = this.gen( );
@@ -71,6 +72,7 @@ export class TextGenerator {
       }
       if ( type === TOKEN.PARA_START ) {
         let p = document.createElement( "p" );
+        p.dataset.continues = ops[ 0 ];
         elements_stack.push( p );
         continue;
       }

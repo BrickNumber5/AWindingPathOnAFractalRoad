@@ -54,8 +54,13 @@ export class TextGenerator {
         return page;
       }
       if ( type === TOKEN.TEXT ) {
-        let text = document.createTextNode( ops[ 0 ] );
-        elements_stack.at( -1 ).appendChild( text );
+        let e = elements_stack.at( -1 );
+        if ( e.lastChild !== null && e.lastChild.nodeType === Node.TEXT_NODE ) {
+          e.lastChild.nodeValue += " " + ops[ 0 ];
+        } else {
+          let text = document.createTextNode( ops[ 0 ] );
+          e.appendChild( text );
+        }
         continue;
       }
       if ( type === TOKEN.PAGE_START ) {

@@ -43,7 +43,7 @@ nextPageButton.onclick = nextPages;
 function prevPages( ) {
   if ( page % 2 === 0 ) pages[ page - 1 ].style.display = "none";
   pages[ page ].style.display = "none";
-  page -= 2;
+  page -= ( page % 2 === 0 ) ? 2 : 1;
   pages[ page ].style.display = "";
   nextPageButton.disabled = false;
   if ( page > 0 ) {

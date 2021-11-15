@@ -27,18 +27,22 @@ body {
   width: 4rem;
   display: block;
   background-color: #ccca;
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAwIDEwMDAiPjxwYXRoIGQ9Ik02NTAgMjAwTDM1MCA1MDBMNjUwIDgwMCIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2Utd2lkdGg9IjI1MCIgc3Ryb2tlPSIjZmZmOCI+PC9wYXRoPjwvc3ZnPg);
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .prevPageButton:not(:disabled) {
   cursor: pointer;
 }
 
-.prevPageButton:not(:disabled):is(:hover, :focus) {
-  background-color: #cccc;
+.prevPageButton:not(:disabled):is(:hover, :focus-visible) {
+  filter: brightness(150%);
 }
 
 .prevPageButton:disabled {
-  background-color: #2226;
+  filter: brightness(75%);
+  opacity: 50%;
 }
 
 .nextPageButton {
@@ -49,18 +53,22 @@ body {
   width: 4rem;
   display: block;
   background-color: #ccca;
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAwIDEwMDAiPjxwYXRoIGQ9Ik0zNTAgMjAwTDY1MCA1MDBMMzUwIDgwMCIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2Utd2lkdGg9IjI1MCIgc3Ryb2tlPSIjZmZmOCI+PC9wYXRoPjwvc3ZnPg);
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .nextPageButton:disabled {
-  background-color: #2226;
+  filter: brightness(75%);
+  opacity: 50%;
 }
 
 .nextPageButton:not(:disabled) {
   cursor: pointer;
 }
 
-.nextPageButton:not(:disabled):is(:hover, :focus) {
-  background-color: #cccc;
+.nextPageButton:not(:disabled):is(:hover, :focus-visible) {
+  filter: brightness(150%);
 }
 
 .page {

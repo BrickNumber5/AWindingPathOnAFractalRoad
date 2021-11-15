@@ -50,7 +50,14 @@ export class TextGenerator {
         page.className = "page";
         page.dataset.number = this.page_num + 1;
         page.dataset.last = true;
-        // Special Final Page goes here
+        let d = document.createElement( "div" );
+        d.className = "lastpagetext";
+        d.innerHTML = "<span>Well, you've reached the end.</span>"
+                    + "<span>Rather, you've reached the end of what's here sofar.</span>"
+                    + "<span>More chapters may or may not come in the future.</span>"
+                    + "<span>More importantly, perhaps, you've reached <span class=\"underline\">an</span> end, not <span class=\"underline\">the</span> end.</span>"
+                    + "<span>Care to <a href=\"#\" onclick=\"resetTextgen( );return false;\">read another</a>?</span>";
+        page.appendChild( d );
         return page;
       }
       if ( type === TOKEN.TEXT ) {
@@ -58,8 +65,7 @@ export class TextGenerator {
         if ( e.lastChild !== null && e.lastChild.nodeType === Node.TEXT_NODE ) {
           e.lastChild.nodeValue += " " + ops[ 0 ];
         } else {
-          let text = document.createTextNode( ops[ 0 ] );
-          e.appendChild( text );
+          e.appendChild( document.createTextNode( ops[ 0 ] ) );
         }
         continue;
       }

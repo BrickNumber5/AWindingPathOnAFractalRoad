@@ -85,7 +85,7 @@ body {
   position: absolute;
   content: attr(data-number);
   bottom: 1.5rem;
-  width: 100%;
+  width: calc( 100% - 2rem );
   text-align: center;
   font-size: 1.5rem;
   font-style: italic;
@@ -171,4 +171,30 @@ p * {
   padding: 0.5rem;
   color: white;
   cursor: pointer;
+}
+
+.lastpagetext {
+  position: absolute;
+  display: block;
+  left: 50%;
+  top: 50%;
+  width: 135%;
+  transform: translate( -50%, -50% ) rotate( -0.145turn );
+  text-align: center;
+}
+
+.lastpagetext > span {
+  display: block;
+  font-family: 'Caveat', cursive;
+  font-size: 2rem;
+}
+
+.lastpagetext > span > a {
+  color: #35c;
+  cursor: pointer;
+}
+
+.lastpagetext > span > a:is(:hover, :focus-visible) {
+  text-decoration: underline;
+  text-decoration-thickness: 0.2rem;
 }

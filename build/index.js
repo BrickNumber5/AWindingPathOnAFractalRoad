@@ -97,3 +97,14 @@ function resolveMC( blank, options, resolveFn, getFn ) {
 }
 
 window.resolveMC = resolveMC;
+
+function resetTextgen( ) {
+  textgen.resetFn( );
+  page = 0;
+  rerender( );
+  pages[ 0 ].style.display = "";
+  prevPageButton.disabled = true;
+  nextPageButton.disabled = false;
+}
+
+window.resetTextgen = resetTextgen;

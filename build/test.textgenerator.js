@@ -77,7 +77,7 @@ function* skip( ) {
   yield TOKEN.PAGE_END;
   yield TOKEN.PAGE_START;
   yield [ TOKEN.PARA_START, false ];
-  yield [ TOKEN.TEXT, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vitae enim ante. Nunc convallis lorem dui, sed placerat purus facilisis vel. Nunc vitae metus non purus aliquam tincidunt. Maecenas semper, ante ut consequat porta, mi justo pulvinar odio, sed facilisis nunc neque ut ante. Sed at leo a orci feugiat fringilla. Cras ac libero cursus, dignissim felis at, accumsan orci. Sed ultrices ex sit amet sem finibus, sed sodales tortor cursus. Nulla interdum vulputate lorem at sagittis. Integer id enim fringilla, mollis dui accumsan, tincidunt diam. Ut faucibus pharetra mi et imperdiet. Pellentesque lobortis cursus condimentum." ];
+  yield [ TOKEN.TEXT, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vitae enim ante. Nunc convallis lorem dui, sed placerat purus facilisis vel. Nunc vitae metus non purus aliquam tincidunt. Maecenas semper, ante ut consequat porta, mi justo pulvinar odio, sed facilisis nunc neque ut ante. Sed at leo a orci feugiat fringilla. Cras ac libero cursus, dignissim felis at, accumsan orci. Sed ultrices ex sit amet sem finibus, sed sodales tortor cursus. Nulla interdum vulputate lorem at sagittis. Integer id enim fringilla, mollis dui accumsan, tincidunt diam." ];
   yield TOKEN.PARA_END;
   yield [ TOKEN.PARA_START, false ];
   yield [ TOKEN.TEXT, "This page has a whole, whole, whole bunch of text that doesn't actually finish on this page and therefore the text on the next page doesn't start with an indent because it is continuing on from this one. This is accomplished by replacing the triple dash page break" ];

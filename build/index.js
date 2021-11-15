@@ -35,6 +35,7 @@ function nextPages( ) {
   if ( pages[ page ].dataset.last === "true" || unresolved ) {
     nextPageButton.disabled = true;
   }
+  optionsbar.style.display = "none";
 }
 
 nextPageButton.onclick = nextPages;
@@ -42,7 +43,7 @@ nextPageButton.onclick = nextPages;
 function prevPages( ) {
   if ( page % 2 === 0 ) pages[ page - 1 ].style.display = "none";
   pages[ page ].style.display = "none";
-  page -= 2;
+  page -= ( page % 2 === 0 ) ? 2 : 1;
   pages[ page ].style.display = "";
   nextPageButton.disabled = false;
   if ( page > 0 ) {
@@ -50,6 +51,7 @@ function prevPages( ) {
   } else {
     prevPageButton.disabled = true;
   }
+  optionsbar.style.display = "none";
 }
 
 prevPageButton.onclick = prevPages;
@@ -64,7 +66,7 @@ function checkResolved( ) {
 }
 
 function rerender( ) {
-  document.querySelectorAll( ".container .page" ).forEach( p => p.parentNode.removeChild( p ) );
+  document.querySelectorAll( ".container .page:not([data-first])" ).forEach( p => p.parentNode.removeChild( p ) );
   pages = [ document.querySelector( ".page" ) ];
   textgen.start( );
   for ( let i = 1; i <= page; i++ ) {
@@ -74,14 +76,11 @@ function rerender( ) {
   }
 }
 
-function resolveMC( blank, options, resolveFn ) {
+function resolveMC( blank, options, resolveFn, getFn ) {
   blankMC = { options, resolve: v => {
     resolveFn( v );
     optionsbar.style.display = "none";
     rerender( );
-    let blank = container.querySelector( ".blank" ); //TODO: Refactor this so it actually works when there is more than one blank
-    blank.dataset.unresolved = false;
-    blank.dataset.filled = v;
     checkResolved( );
   } };
   optionsbar.style.display = "";
@@ -98,3 +97,14 @@ function resolveMC( blank, options, resolveFn ) {
 }
 
 window.resolveMC = resolveMC;
+
+function resetTextgen( ) {
+  textgen.resetFn( );
+  page = 0;
+  rerender( );
+  pages[ 0 ].style.display = "";
+  prevPageButton.disabled = true;
+  nextPageButton.disabled = false;
+}
+
+window.resetTextgen = resetTextgen;

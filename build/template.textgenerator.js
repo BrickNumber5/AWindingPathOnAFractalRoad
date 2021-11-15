@@ -18,8 +18,9 @@ export const TOKEN = {
 };
 
 export class TextGenerator {
-  constructor( gen ) {
+  constructor( gen, resetFn ) {
     this.gen = gen;
+    this.resetFn = resetFn;
   }
   start( ) {
     this.runningGen = this.gen( );
@@ -49,12 +50,23 @@ export class TextGenerator {
         page.className = "page";
         page.dataset.number = this.page_num + 1;
         page.dataset.last = true;
-        // Special Final Page goes here
+        let d = document.createElement( "div" );
+        d.className = "lastpagetext";
+        d.innerHTML = "<span>Well, you've reached the end.</span>"
+                    + "<span>Rather, you've reached the end of what's here sofar.</span>"
+                    + "<span>More chapters may or may not come in the future.</span>"
+                    + "<span>More importantly, perhaps, you've reached <span class=\"underline\">an</span> end, not <span class=\"underline\">the</span> end.</span>"
+                    + "<span>Care to <a href=\"#\" onclick=\"resetTextgen( );return false;\">read another</a>?</span>";
+        page.appendChild( d );
         return page;
       }
       if ( type === TOKEN.TEXT ) {
-        let text = document.createTextNode( ops[ 0 ] );
-        elements_stack.at( -1 ).appendChild( text );
+        let e = elements_stack.at( -1 );
+        if ( e.lastChild !== null && e.lastChild.nodeType === Node.TEXT_NODE ) {
+          e.lastChild.nodeValue += " " + ops[ 0 ];
+        } else {
+          e.appendChild( document.createTextNode( ops[ 0 ] ) );
+        }
         continue;
       }
       if ( type === TOKEN.PAGE_START ) {
@@ -71,6 +83,7 @@ export class TextGenerator {
       }
       if ( type === TOKEN.PARA_START ) {
         let p = document.createElement( "p" );
+        p.dataset.continues = ops[ 0 ];
         elements_stack.push( p );
         continue;
       }
@@ -98,10 +111,17 @@ export class TextGenerator {
         continue;
       }
       if ( type === TOKEN.BLANK_MC ) {
+        const [ options, resolveFn, getFn ] = ops;
         let blank = document.createElement( "button" );
         blank.className = "blank";
-        blank.dataset.unresolved = true;
-        blank.onclick = resolveMC.bind( null, blank, ops[ 0 ], ops[ 1 ] );
+        let v = getFn( );
+        if ( v === "" ) {
+          blank.dataset.unresolved = true;
+        } else {
+          blank.dataset.filled = v;
+        }
+        blank.style.width = options.map( o => o.length ).reduce( ( a, b ) => a > b ? a : b ) * 1.5 + "ch";
+        blank.onclick = resolveMC.bind( null, blank, options, resolveFn, getFn );
         elements_stack.at( -1 ).appendChild( blank );
         continue;
       }

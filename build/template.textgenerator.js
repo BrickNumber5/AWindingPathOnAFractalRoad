@@ -114,6 +114,7 @@ export class TextGenerator {
         } else {
           blank.dataset.filled = v;
         }
+        blank.style.width = options.map( o => o.length ).reduce( ( a, b ) => a > b ? a : b ) * 1.5 + "ch";
         blank.onclick = resolveMC.bind( null, blank, options, resolveFn, getFn );
         elements_stack.at( -1 ).appendChild( blank );
         continue;

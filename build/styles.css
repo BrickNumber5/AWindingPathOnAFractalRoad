@@ -126,7 +126,6 @@ p * {
 .blank {
   display: inline-block;
   background-color: black;
-  width: 5rem;
   height: 1.5rem;
   cursor: pointer;
   font-family: 'Caveat', cursive;

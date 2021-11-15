@@ -35,6 +35,7 @@ function nextPages( ) {
   if ( pages[ page ].dataset.last === "true" || unresolved ) {
     nextPageButton.disabled = true;
   }
+  optionsbar.style.display = "none";
 }
 
 nextPageButton.onclick = nextPages;
@@ -50,6 +51,7 @@ function prevPages( ) {
   } else {
     prevPageButton.disabled = true;
   }
+  optionsbar.style.display = "none";
 }
 
 prevPageButton.onclick = prevPages;

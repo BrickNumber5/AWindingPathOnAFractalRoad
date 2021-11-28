@@ -14,7 +14,7 @@ function compileFile( name, num = 0, max = 1 ) {
   const dotFileName = `./debug/${ name }.textgenerator.dot`;
   console.log( `Processing ${ name }          [${ num + 1 }/${ max }]` );
   console.log( `Reading ${ srcFileName }` );
-  const srcFile = fs.readFileSync( srcFileName ).toString( );
+  const srcFile = fs.readFileSync( srcFileName ).toString( ).replace( /\r\n/g, "\n" );
   console.log( `Compiling` );
   const { resFile, dotFile } = compile( name, srcFile );
   console.log( `Writing ${ resFileName }` );

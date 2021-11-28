@@ -2,7 +2,7 @@ import * as template from "./template.textgenerator.js"
 
 const { TOKEN } = template;
 
-let blank = "", bin0 = "", bin1 = "", bin2 = "", bin3 = "", shortanswer = "", shortanswer2 = "";
+let blank = "", bin0 = "", bin1 = "", bin2 = "", bin3 = "", shortanswer = "", shortanswer2 = "", echotest = "";
 
 function reset( ) {
   blank = "";
@@ -12,6 +12,7 @@ function reset( ) {
   bin3 = "";
   shortanswer = "";
   shortanswer2 = "";
+  echotest = "";
 }
 
 function* START( ) {
@@ -461,6 +462,18 @@ function* merge2( ) {
   yield [ TOKEN.TEXT, "And this one >> " ];
   yield [ TOKEN.BLANK_SA, 3, __$result => { shortanswer2 = __$result; }, ( ) => shortanswer2 ];
   yield [ TOKEN.TEXT, " << gives you three." ];
+  yield TOKEN.PARA_END;
+  yield TOKEN.PAGE_END;
+  yield TOKEN.PAGE_START;
+  yield [ TOKEN.PARA_START, false ];
+  yield [ TOKEN.TEXT, "This is a test of the from stored element. It echoes a value from a blank." ];
+  yield TOKEN.PARA_END;
+  yield [ TOKEN.PARA_START, false ];
+  yield [ TOKEN.TEXT, "Whatever you put in this blank: " ];
+  yield [ TOKEN.BLANK_SA, 10, __$result => { echotest = __$result; }, ( ) => echotest ];
+  yield [ TOKEN.TEXT, ", will be echoed here: \"" ];
+  yield [ TOKEN.TEXT, echotest ];
+  yield [ TOKEN.TEXT, "\"" ];
   yield TOKEN.PARA_END;
   yield TOKEN.PAGE_END;
   yield TOKEN.PAGE_START;

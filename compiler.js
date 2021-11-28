@@ -98,6 +98,8 @@ function compile( name, srcFile ) {
             b.goesto === "END" ? "" :  `    yield* ${ b.goesto }( );\n`
           }    return TOKEN.END;\n  }`
         ).join( " else " ) + ( data.branches.filter( b => b.choice === "" ).length > 0 ? "\n" : " else {\n    return TOKEN.END;\n  }\n" );
+      } else if ( type === "from_stored" ) {
+        res += `  yield [ TOKEN.TEXT, ${ data } ];\n`;
       } else {
         console.log( res );
         console.log( type );
@@ -306,6 +308,23 @@ function parse( srcFile ) {
       i++;
       continue;
     }
+    if ( srcFile[ i ] === "[" ) {
+      i++;
+      if ( srcFile[ i ] !== "@" ) throw "!";
+      i++;
+      let reference = "";
+      while ( i < srcFile.length && srcFile[ i ] !== "]" ) {
+        reference += srcFile[ i ];
+        i++;
+      }
+      i++;
+      if ( txt.length > 0 ) {
+        tokens.push( { type: "text", data: txt } );
+        txt = "";
+      }
+      tokens.push( { type: "from_stored", data: reference } );
+      continue;
+    }
     if ( srcFile[ i ] === "\\" ) {
       i++;
     }
@@ -340,7 +359,8 @@ function parse( srcFile ) {
         "bold_start", "bold_end",
         "italic_start", "italic_end",
         "underline_start", "underline_end",
-        "striked_start", "striked_end"
+        "striked_start", "striked_end",
+        "from_stored"
       ].includes( token.type ) ) {
         currentFunctionTokens.push( token );
       } else {

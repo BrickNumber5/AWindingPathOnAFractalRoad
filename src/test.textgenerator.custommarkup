@@ -87,7 +87,7 @@ Text that looks like the above is accomplished by writing "\\\\ \\\* \\\* \\\* \
 
 This is a test of using multiple branches. Here filling in the following blanks will return the binary number represented.
 
-[__@bin0:"0","1"__, __@bin1:"0","1"__, __@bin2:"0","1"__, __@bin3:"0","1"__]
+\[__@bin0:"0","1"__, __@bin1:"0","1"__, __@bin2:"0","1"__, __@bin3:"0","1"__\]
 
 # ?-> @bin0
   "0" -> @n0
@@ -303,6 +303,12 @@ This is a page containing a test short answer blank.
 This __@shortanswer:15__ allows you to enter up to fifteen characters.
 
 And this one >> __@shortanswer2:3__ << gives you three.
+
+# ---
+
+This is a test of the from stored element. It echoes a value from a blank.
+
+Whatever you put in this blank: __@echotest:10__, will be echoed here: "[@echotest]"
 
 # ---
 

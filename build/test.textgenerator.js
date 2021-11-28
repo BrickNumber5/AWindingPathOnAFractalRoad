@@ -1,8 +1,8 @@
 import * as template from "./template.textgenerator.js"
 
-const { TOKEN } = template;
+const { TOKEN, makeTokens } = template;
 
-let blank = "", bin0 = "", bin1 = "", bin2 = "", bin3 = "", shortanswer = "", shortanswer2 = "", echotest = "";
+let blank = "", bin0 = "", bin1 = "", bin2 = "", bin3 = "", shortanswer = "", shortanswer2 = "", echotest = "", humannumber = "";
 
 function reset( ) {
   blank = "";
@@ -13,6 +13,7 @@ function reset( ) {
   shortanswer = "";
   shortanswer2 = "";
   echotest = "";
+  humannumber = "";
 }
 
 function* START( ) {
@@ -474,6 +475,88 @@ function* merge2( ) {
   yield [ TOKEN.TEXT, ", will be echoed here: \"" ];
   yield [ TOKEN.TEXT, echotest ];
   yield [ TOKEN.TEXT, "\"" ];
+  yield TOKEN.PARA_END;
+  yield TOKEN.PAGE_END;
+  yield TOKEN.PAGE_START;
+  yield [ TOKEN.PARA_START, false ];
+  yield [ TOKEN.TEXT, "This is a test of the exec javascript element. It allows arbitrary javascript to be exectuted and run." ];
+  yield TOKEN.PARA_END;
+  yield [ TOKEN.PARA_START, false ];
+  yield* makeTokens( ( ( ) => { console.log( "Hello!" ); } )( ) );
+  yield TOKEN.PARA_END;
+  yield [ TOKEN.PARA_START, false ];
+  yield [ TOKEN.TEXT, "The bit of javascript above just logs Hello to the console, it should produce no ouput and should leave no visible impact on the page. It should output hello to the console each time the page is rerendered, such as when an input changes." ];
+  yield TOKEN.PARA_END;
+  yield [ TOKEN.PARA_START, false ];
+  yield [ TOKEN.TEXT, "This bit of javascript outputs a random number between one and ten: " ];
+  yield* makeTokens( ( ( ) => { return Math.floor( Math.random( ) * 10 + 1 ); } )( ) );
+  yield [ TOKEN.TEXT, "." ];
+  yield TOKEN.PARA_END;
+  yield [ TOKEN.PARA_START, false ];
+  yield [ TOKEN.TEXT, "This bit of javascript outputs the current timestamp: " ];
+  yield* makeTokens( ( ( ) => { return new Date( ); } )( ) );
+  yield [ TOKEN.TEXT, "." ];
+  yield TOKEN.PARA_END;
+  yield [ TOKEN.PARA_START, false ];
+  yield [ TOKEN.TEXT, "This bit of javascript outputs bold text: " ];
+  yield* makeTokens( ( ( ) => { return [ TOKEN.BOLD_START, "BOLD TEXT", TOKEN.BOLD_END ]; } )( ) );
+  yield [ TOKEN.TEXT, "." ];
+  yield TOKEN.PARA_END;
+  yield [ TOKEN.PARA_START, false ];
+  yield [ TOKEN.TEXT, "The bit of javascript below outputs the number placed in this box: " ];
+  yield [ TOKEN.BLANK_SA, 15, __$result => { humannumber = __$result; }, ( ) => humannumber ];
+  yield [ TOKEN.TEXT, " as the english word(s) for that number." ];
+  yield TOKEN.PARA_END;
+  yield [ TOKEN.PARA_START, false ];
+  yield* makeTokens( ( ( ) => {
+  function human( string ) {
+    const singles = [ "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" ];
+    if ( string === "" ) {
+      return;
+    } else {
+      let n = +string;
+      if ( Number.isInteger( n ) ) {
+        let negative = false;
+        if ( n < 0 ) {
+          n = -n;
+          negative = true;
+        }
+        n = Array.from( n.toString( ), x => +x ).reverse( );
+        if ( n.length % 3 === 1 ) n.push( 0 );
+        if ( n.length % 3 === 2 ) n.push( 0 );
+        let m = [ ];
+        for ( let i = 0; i < n.length; i += 3 ) {
+          m.push( [ n[ i ], n[ i + 1 ], n[ i + 2 ], i / 3 ] );
+        }
+        m.reverse( );
+        m = m.map( triple => {
+          const [ ones, tens, hundreds, idx ] = triple;
+          if ( ones === 0 && tens === 0 && hundreds === 0 ) return null;
+          let str = "";
+          if ( hundreds > 0 ) str += singles[ hundreds ] + " hundred ";
+          if ( tens === 1 ) {
+            str += [ "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen" ][ ones ];
+          } else {
+            str += [ "", "ten ", "twenty ", "thirty ", "fourty ", "fifty ", "sixty ", "seventy ", "eighty ", "ninety " ][ tens ];
+            if ( ones === 0 ) {
+              str = str.substring( 0, str.length - 1 );
+            } else {
+              str += singles[ ones ];
+            }
+          }
+          str += [ "", " thousand", " million", " billion", " trillion" ][ idx ];
+          return ( negative ? "negative " : "" ) + str;
+        } ).filter( x => x !== null );
+        let str = m.join( " " );
+        if ( str === "" ) str = "zero";
+        return str;
+      } else {
+        return "not an integer";
+      }
+    }
+  }
+  return human( humannumber );
+} )( ) );
   yield TOKEN.PARA_END;
   yield TOKEN.PAGE_END;
   yield TOKEN.PAGE_START;

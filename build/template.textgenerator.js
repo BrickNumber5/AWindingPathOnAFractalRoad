@@ -144,3 +144,12 @@ export class TextGenerator {
     }
   }
 }
+
+export function* makeTokens( tokens ) {
+  if ( tokens === undefined ) tokens = [ ];
+  if ( !Array.isArray( tokens ) ) tokens = [ [ TOKEN.TEXT, tokens.toString( ) ] ];
+  tokens = tokens.map( t => ( typeof t === "string" ) ? [ TOKEN.TEXT, t ] : t );
+  for ( let i = 0; i < tokens.length; i++ ) {
+    yield tokens[ i ];
+  }
+}

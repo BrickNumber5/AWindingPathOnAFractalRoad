@@ -312,6 +312,72 @@ Whatever you put in this blank: __@echotest:10__, will be echoed here: "[@echote
 
 # ---
 
+This is a test of the exec javascript element. It allows arbitrary javascript to be exectuted and run.
+
+{ console.log( "Hello!" ); }
+
+The bit of javascript above just logs Hello to the console, it should produce no ouput and should leave no visible impact on the page. It should output hello to the console each time the page is rerendered, such as when an input changes.
+
+This bit of javascript outputs a random number between one and ten: { return Math.floor( Math.random( ) * 10 + 1 ); }.
+
+This bit of javascript outputs the current timestamp: { return new Date( ); }.
+
+This bit of javascript outputs bold text: { return [ TOKEN.BOLD_START, "BOLD TEXT", TOKEN.BOLD_END ]; }.
+
+The bit of javascript below outputs the number placed in this box: __@humannumber:15__ as the english word(s) for that number.
+
+{
+  function human( string ) {
+    const singles = [ "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" ];
+    if ( string === "" ) {
+      return;
+    } else {
+      let n = +string;
+      if ( Number.isInteger( n ) ) {
+        let negative = false;
+        if ( n < 0 ) {
+          n = -n;
+          negative = true;
+        }
+        n = Array.from( n.toString( ), x => +x ).reverse( );
+        if ( n.length % 3 === 1 ) n.push( 0 );
+        if ( n.length % 3 === 2 ) n.push( 0 );
+        let m = [ ];
+        for ( let i = 0; i < n.length; i += 3 ) {
+          m.push( [ n[ i ], n[ i + 1 ], n[ i + 2 ], i / 3 ] );
+        }
+        m.reverse( );
+        m = m.map( triple => {
+          const [ ones, tens, hundreds, idx ] = triple;
+          if ( ones === 0 && tens === 0 && hundreds === 0 ) return null;
+          let str = "";
+          if ( hundreds > 0 ) str += singles[ hundreds ] + " hundred ";
+          if ( tens === 1 ) {
+            str += [ "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen" ][ ones ];
+          } else {
+            str += [ "", "ten ", "twenty ", "thirty ", "fourty ", "fifty ", "sixty ", "seventy ", "eighty ", "ninety " ][ tens ];
+            if ( ones === 0 ) {
+              str = str.substring( 0, str.length - 1 );
+            } else {
+              str += singles[ ones ];
+            }
+          }
+          str += [ "", " thousand", " million", " billion", " trillion" ][ idx ];
+          return ( negative ? "negative " : "" ) + str;
+        } ).filter( x => x !== null );
+        let str = m.join( " " );
+        if ( str === "" ) str = "zero";
+        return str;
+      } else {
+        return "not an integer";
+      }
+    }
+  }
+  return human( humannumber );
+}
+
+# ---
+
 This is the final page.
 
 # -> @END

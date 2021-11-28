@@ -38,7 +38,7 @@ function compile( name, srcFile ) {
   
   let res = "";
   res += 'import * as template from "./template.textgenerator.js"\n\n';
-  res += "const { TOKEN } = template;\n\n";
+  res += "const { TOKEN, makeTokens } = template;\n\n";
   
   if ( parsed.variables.length > 0 ) {
     res += `let ${ parsed.variables.join( ' = "", ' ) } = "";\n\n`;
@@ -100,6 +100,8 @@ function compile( name, srcFile ) {
         ).join( " else " ) + ( data.branches.filter( b => b.choice === "" ).length > 0 ? "\n" : " else {\n    return TOKEN.END;\n  }\n" );
       } else if ( type === "from_stored" ) {
         res += `  yield [ TOKEN.TEXT, ${ data } ];\n`;
+      } else if ( type === "javascript" ) {
+        res += `  yield* makeTokens( ( ( ) => {${ data }} )( ) );\n`;
       } else {
         console.log( res );
         console.log( type );
@@ -325,6 +327,28 @@ function parse( srcFile ) {
       tokens.push( { type: "from_stored", data: reference } );
       continue;
     }
+    if ( srcFile[ i ] === "{" ) {
+      i++;
+      if ( txt.length > 0 ) {
+        tokens.push( { type: "text", data: txt } );
+        txt = "";
+      }
+      let numbrackets = 1, javascript = "";
+      while ( i < srcFile.length ) {
+        if ( srcFile[ i ] === "{" ) {
+          numbrackets++;
+        }
+        if ( srcFile[ i ] === "}" ) {
+          numbrackets--;
+          if ( numbrackets === 0 ) break;
+        }
+        javascript += srcFile[ i ];
+        i++;
+      }
+      i++;
+      tokens.push( { type: "javascript", data: javascript } );
+      continue;
+    }
     if ( srcFile[ i ] === "\\" ) {
       i++;
     }
@@ -360,7 +384,8 @@ function parse( srcFile ) {
         "italic_start", "italic_end",
         "underline_start", "underline_end",
         "striked_start", "striked_end",
-        "from_stored"
+        "from_stored",
+        "javascript"
       ].includes( token.type ) ) {
         currentFunctionTokens.push( token );
       } else {

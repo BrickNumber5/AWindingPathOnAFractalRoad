@@ -82,6 +82,10 @@ function compile( name, srcFile ) {
         res += `  yield [ TOKEN.BLANK_MC, [ ${
           data.options.map( o => JSON.stringify( o ) ).join( ", " )
         } ], __$result => { ${ data.reference } = __$result; }, ( ) => ${ data.reference } ];\n`;
+      } else if ( type === "blank_sa" ) {
+        res += `  yield [ TOKEN.BLANK_SA, ${
+          JSON.stringify( data.length )
+        }, __$result => { ${ data.reference } = __$result; }, ( ) => ${ data.reference } ];\n`;
       } else if ( type === "jump" ) {
         if ( data === "END" ) {
           res += `  return TOKEN.END\n`;
@@ -250,24 +254,37 @@ function parse( srcFile ) {
           reference += srcFile[ i ];
           i++;
         }
-        if ( srcFile[ i + 1 ] !== '"' ) throw "!";
-        let labels = [ ];
-        do {
-          let label = "";
-          i += 2;
-          while ( i < srcFile.length && srcFile[ i ] !== '"' ) {
-            if ( srcFile[ i ] === "\\" ) {
+        if ( ![ '"', "1", "2", "3", "4", "5", "6", "7", "8", "9" ].includes( srcFile[ i + 1 ] ) ) throw "!";
+        if ( srcFile[ i + 1 ] === '"' ) {
+          let labels = [ ];
+          do {
+            let label = "";
+            i += 2;
+            while ( i < srcFile.length && srcFile[ i ] !== '"' ) {
+              if ( srcFile[ i ] === "\\" ) {
+                i++;
+              }
+              label += srcFile[ i ];
               i++;
             }
-            label += srcFile[ i ];
+            i++;
+            labels.push( label );
+          } while ( srcFile[ i ] === "," );
+          if ( srcFile[ i ] !== "_" || srcFile[ i + 1 ] !== "_" ) throw "!";
+          i += 2;
+          tokens.push( { type: "blank_mc", data: { reference, options: labels } } );
+        } else {
+          i++;
+          let n = "";
+          while ( "0123456789".includes( srcFile[ i ] ) ) {
+            n += srcFile[ i ];
             i++;
           }
-          i++;
-          labels.push( label );
-        } while ( srcFile[ i ] === "," );
-        if ( srcFile[ i ] !== "_" || srcFile[ i + 1 ] !== "_" ) throw "!";
-        i += 2;
-        tokens.push( { type: "blank_mc", data: { reference, options: labels } } );
+          n = +n;
+          if ( srcFile[ i ] !== "_" || srcFile[ i + 1 ] !== "_" ) throw "!";
+          i += 2;
+          tokens.push( { type: "blank_sa", data: { reference, length: n } } );
+        }
       } else {
         undr = !undr;
         if ( txt.length > 0 ) {
@@ -347,6 +364,9 @@ function parse( srcFile ) {
           if ( goestoend || nodefault ) links.push( { from: currentFunctionName, to: "END", implied: !goestoend } );
           currentFunctionName = null;
         } else if ( token.type === "blank_mc" ) {
+          variables.push( token.data.reference );
+          currentFunctionTokens.push( token );
+        } else if ( token.type === "blank_sa" ) {
           variables.push( token.data.reference );
           currentFunctionTokens.push( token );
         } else if ( token.type === "next_page" ) {

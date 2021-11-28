@@ -9,8 +9,6 @@ const container = document.querySelector( ".container" ),
 
 let page = 0, pages = [ document.querySelector( ".page" ) ];
 
-let blankMC;
-
 function nextPages( ) {
   if ( page > 0 ) pages[ page - 1 ].style.display = "none";
   pages[ page ].style.display = "none";
@@ -77,7 +75,7 @@ function rerender( ) {
 }
 
 function resolveMC( blank, options, resolveFn, getFn ) {
-  blankMC = { options, resolve: v => {
+  let blankMC = { options, resolve: v => {
     resolveFn( v );
     optionsbar.style.display = "none";
     rerender( );
@@ -97,6 +95,28 @@ function resolveMC( blank, options, resolveFn, getFn ) {
 }
 
 window.resolveMC = resolveMC;
+
+function resolveSA( blank, length, resolveFn, getFn ) {
+  let blankSA = { length, resolve: v => {
+    resolveFn( v );
+    optionsbar.style.display = "none";
+    rerender( );
+    checkResolved( );
+  } };
+  optionsbar.style.display = "";
+  while ( optionsbar.firstChild ) {
+    optionsbar.removeChild( optionsbar.lastChild );
+  }
+  let input = document.createElement( "input" );
+  input.className = "blank-short";
+  input.maxLength = length;
+  input.value = getFn( );
+  input.onchange = e => blankSA.resolve( e.target.value );
+  optionsbar.appendChild( input );
+  input.focus( );
+}
+
+window.resolveSA = resolveSA;
 
 function resetTextgen( ) {
   textgen.resetFn( );

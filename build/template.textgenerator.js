@@ -15,6 +15,7 @@ export const TOKEN = {
   STRIKED_END: 12,
   TITLE: 13,
   BLANK_MC: 14,
+  BLANK_SA: 15
 };
 
 export class TextGenerator {
@@ -122,6 +123,21 @@ export class TextGenerator {
         }
         blank.style.width = options.map( o => o.length ).reduce( ( a, b ) => a > b ? a : b ) * 1.5 + "ch";
         blank.onclick = resolveMC.bind( null, blank, options, resolveFn, getFn );
+        elements_stack.at( -1 ).appendChild( blank );
+        continue;
+      }
+      if ( type === TOKEN.BLANK_SA ) {
+        const [ length, resolveFn, getFn ] = ops;
+        let blank = document.createElement( "button" );
+        blank.className = "blank";
+        let v = getFn( );
+        if ( v === "" ) {
+          blank.dataset.unresolved = true;
+        } else {
+          blank.dataset.filled = v;
+        }
+        blank.style.width = length * 1.5 + "ch";
+        blank.onclick = resolveSA.bind( null, blank, length, resolveFn, getFn );
         elements_stack.at( -1 ).appendChild( blank );
         continue;
       }

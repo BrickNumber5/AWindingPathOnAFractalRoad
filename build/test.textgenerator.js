@@ -2,7 +2,7 @@ import * as template from "./template.textgenerator.js"
 
 const { TOKEN } = template;
 
-let blank = "", bin0 = "", bin1 = "", bin2 = "", bin3 = "", shortanswer = "";
+let blank = "", bin0 = "", bin1 = "", bin2 = "", bin3 = "", shortanswer = "", shortanswer2 = "";
 
 function reset( ) {
   blank = "";
@@ -11,6 +11,7 @@ function reset( ) {
   bin2 = "";
   bin3 = "";
   shortanswer = "";
+  shortanswer2 = "";
 }
 
 function* START( ) {
@@ -455,6 +456,11 @@ function* merge2( ) {
   yield [ TOKEN.TEXT, "This " ];
   yield [ TOKEN.BLANK_SA, 15, __$result => { shortanswer = __$result; }, ( ) => shortanswer ];
   yield [ TOKEN.TEXT, " allows you to enter up to fifteen characters." ];
+  yield TOKEN.PARA_END;
+  yield [ TOKEN.PARA_START, false ];
+  yield [ TOKEN.TEXT, "And this one >> " ];
+  yield [ TOKEN.BLANK_SA, 3, __$result => { shortanswer2 = __$result; }, ( ) => shortanswer2 ];
+  yield [ TOKEN.TEXT, " << gives you three." ];
   yield TOKEN.PARA_END;
   yield TOKEN.PAGE_END;
   yield TOKEN.PAGE_START;

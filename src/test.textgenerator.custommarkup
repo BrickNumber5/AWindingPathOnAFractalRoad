@@ -302,6 +302,8 @@ This is a page containing a test short answer blank.
 
 This __@shortanswer:15__ allows you to enter up to fifteen characters.
 
+And this one >> __@shortanswer2:3__ << gives you three.
+
 # ---
 
 This is the final page.

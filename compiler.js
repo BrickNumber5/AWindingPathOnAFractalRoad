@@ -121,12 +121,21 @@ function parse( srcFile ) {
   // Tokenize
   let sol = true, bold = false, ital = false, undr = false, strk = false, txt = "";
   let i = 0;
+  function pushText( ) {
+    if ( txt.length > 0 ) {
+      tokens.push( { type: "text", data: txt } );
+      txt = "";
+    }
+  }
+  function eatToken( token ) {
+    // returns if a token is present at the index and if it is increments i by the length of the token
+    let r = srcFile.substring( i, i + token.length ) === token;
+    if ( r ) i += token.length;
+    return r;
+  }
   while ( i < srcFile.length ) {
-    if ( sol && srcFile[ i ] === "#" && srcFile[ i + 1 ] === " " ) {
-      i += 2;
-      let chr = srcFile[ i ];
-      i++;
-      if ( chr === "!" ) {
+    if ( sol && eatToken( "# " ) ) {
+      if ( eatToken( "!" ) ) {
         i++;
         let title = "";
         while ( i < srcFile.length && srcFile[ i ] !== "\n" ) {
@@ -135,7 +144,7 @@ function parse( srcFile ) {
         }
         i++;
         tokens.push( { type: "title", data: title } );
-      } else if ( chr === '"' ) {
+      } else if ( eatToken( '"' ) ) {
         i++;
         let comment = "";
         while ( i < srcFile.length && srcFile[ i ] !== "\n" ) {
@@ -144,7 +153,7 @@ function parse( srcFile ) {
         }
         i++;
         tokens.push( { type: "comment", data: comment } );
-      } else if ( chr === "@" ) {
+      } else if ( eatToken( "@" ) ) {
         let reference = "";
         while ( i < srcFile.length && srcFile[ i ] !== "\n" ) {
           reference += srcFile[ i ];
@@ -152,14 +161,11 @@ function parse( srcFile ) {
         }
         i++;
         tokens.push( { type: "reference", data: reference } );
-      } else if ( chr === "-" && srcFile[ i ] === "-" && srcFile[ i + 1 ] === "-" && srcFile[ i + 2 ] === "\n" ) {
-        i += 3;
+      } else if ( eatToken( "---\n" ) ) {
         tokens.push( { type: "next_page", data: false } );
-      } else if ( chr === "." && srcFile[ i ] === "." && srcFile[ i + 1 ] === "." && srcFile[ i + 2 ] === "\n" ) {
-        i += 3;
+      } else if ( eatToken( "...\n" ) ) {
         tokens.push( { type: "next_page", data: true } );
-      } else if ( chr === "-" && srcFile[ i ] === ">" && srcFile[ i + 1 ] === " " && srcFile[ i + 2 ] === "@" ) {
-        i += 3;
+      } else if ( eatToken( "-> @" ) ) {
         let reference = "";
         while ( i < srcFile.length && srcFile[ i ] !== "\n" ) {
           reference += srcFile[ i ];
@@ -167,8 +173,7 @@ function parse( srcFile ) {
         }
         i++;
         tokens.push( { type: "jump", data: reference } );
-      } else if ( chr === "?" && srcFile[ i ] === "-" && srcFile[ i + 1 ] === ">" && srcFile[ i + 2 ] === " " && srcFile[ i + 3 ] === "@" ) {
-        i += 4;
+      } else if ( eatToken( "?-> @" ) ) {
         let reference = "";
         while ( i < srcFile.length && srcFile[ i ] !== "\n" ) {
           reference += srcFile[ i ];
@@ -187,10 +192,7 @@ function parse( srcFile ) {
             i++;
           }
           i++;
-          if ( srcFile[ i ] !== " " || srcFile[ i + 1 ] !== "-" || srcFile[ i + 2 ] !== ">" || srcFile[ i + 3 ] !== " " || srcFile[ i + 4 ] !== "@" ) {
-            throw "!";
-          }
-          i += 5;
+          if ( !eatToken( " -> @" ) ) throw "!";
           let ref = "";
           while ( i < srcFile.length && srcFile[ i ] !== "\n" ) {
             ref += srcFile[ i ];
@@ -209,10 +211,7 @@ function parse( srcFile ) {
       sol = true;
       i++;
       if ( srcFile[ i ] === "\n" ) {
-        if ( txt.length > 0 ) {
-          tokens.push( { type: "text", data: txt } );
-          txt = "";
-        }
+        pushText( );
         i++;
         if ( srcFile[ i ] !== "#" ) {
           tokens.push( { type: "next_paragraph" } );
@@ -222,10 +221,7 @@ function parse( srcFile ) {
     }
     if ( srcFile[ i ] === "*" ) {
       bold = !bold;
-      if ( txt.length > 0 ) {
-        tokens.push( { type: "text", data: txt } );
-        txt = "";
-      }
+      pushText( );
       tokens.push( { type: bold ? "bold_start" : "bold_end" } );
       sol = false;
       i++;
@@ -233,23 +229,17 @@ function parse( srcFile ) {
     }
     if ( srcFile[ i ] === "/" ) {
       ital = !ital;
-      if ( txt.length > 0 ) {
-        tokens.push( { type: "text", data: txt } );
-        txt = "";
-      }
+      pushText( );
       tokens.push( { type: ital ? "italic_start" : "italic_end" } );
       sol = false;
       i++;
       continue;
     }
     if ( srcFile[ i ] === "_" ) {
+      pushText( );
       sol = false;
       i++;
       if ( srcFile[ i ] === "_" ) {
-        if ( txt.length > 0 ) {
-          tokens.push( { type: "text", data: txt } );
-          txt = "";
-        }
         i++;
         if ( srcFile[ i ] !== "@" ) throw "!";
         i++;
@@ -291,20 +281,13 @@ function parse( srcFile ) {
         }
       } else {
         undr = !undr;
-        if ( txt.length > 0 ) {
-          tokens.push( { type: "text", data: txt } );
-          txt = "";
-        }
         tokens.push( { type: undr ? "underline_start" : "underline_end" } );
       }
       continue;
     }
     if ( srcFile[ i ] === "~" ) {
       strk = !strk;
-      if ( txt.length > 0 ) {
-        tokens.push( { type: "text", data: txt } );
-        txt = "";
-      }
+      pushText( );
       tokens.push( { type: strk ? "striked_start" : "striked_end" } );
       sol = false;
       i++;
@@ -320,19 +303,13 @@ function parse( srcFile ) {
         i++;
       }
       i++;
-      if ( txt.length > 0 ) {
-        tokens.push( { type: "text", data: txt } );
-        txt = "";
-      }
+      pushText( );
       tokens.push( { type: "from_stored", data: reference } );
       continue;
     }
     if ( srcFile[ i ] === "{" ) {
       i++;
-      if ( txt.length > 0 ) {
-        tokens.push( { type: "text", data: txt } );
-        txt = "";
-      }
+      pushText( );
       let numbrackets = 1, javascript = "";
       while ( i < srcFile.length ) {
         if ( srcFile[ i ] === "{" ) {

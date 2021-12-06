@@ -103,9 +103,7 @@ function compile( name, srcFile ) {
       } else if ( type === "javascript" ) {
         res += `  yield* makeTokens( ( ( ) => {${ data }} )( ) );\n`;
       } else {
-        console.log( res );
-        console.log( type );
-        throw "!";
+        throw `Unknown token type: ${ type }`;
       }
     }
     res += "}\n\n";
@@ -195,12 +193,12 @@ function parse( srcFile ) {
         let branches = [ ];
         while ( eatToken( '  ' ) ) {
           let label = readString( );
-          if ( !eatToken( " -> @" ) ) throw "!";
+          if ( !eatToken( " -> @" ) ) throw `Expected " -> @", found ${ srcFile[ i ] } at ${ i }`;
           branches.push( { choice: label, goesto: readUntilNewline( ) } );
         }
         tokens.push( { type: "conditional_jump", data: { reference, branches } } );
       } else {
-        throw "!";
+        throw `Unknown # command "# ${ readUntilNewline( ) }"`;
       }
       continue;
     }
@@ -230,17 +228,17 @@ function parse( srcFile ) {
       pushText( );
       sol = false;
       if ( eatToken( "_" ) ) {
-        if ( !eatToken( "@" ) ) throw "!";
+        if ( !eatToken( "@" ) ) throw `Expected a reference, found ${ srcFile[ i ] } at ${ i }`;
         let reference = readUntil( ":" );
-        if ( !'"123456789'.includes( srcFile[ i ] ) ) throw "!";
+        if ( !'"123456789'.includes( srcFile[ i ] ) ) throw `Expected a string or integer, found ${ srcFile[ i ] } at ${ i }`;
         if ( srcFile[ i ] === '"' ) {
           let labels = [ ];
           do { labels.push( readString( ) ); } while ( eatToken( "," ) );
-          if ( !eatToken( "__" ) ) throw "!";
+          if ( !eatToken( "__" ) ) throw `Expected "__", found ${ srcFile[ i ] } at ${ i }`;
           tokens.push( { type: "blank_mc", data: { reference, options: labels } } );
         } else {
           let n = readInteger( );
-          if ( !eatToken( "__" ) ) throw "!";
+          if ( !eatToken( "__" ) ) throw `Expected "__", found ${ srcFile[ i ] } at ${ i }`;
           tokens.push( { type: "blank_sa", data: { reference, length: n } } );
         }
       } else {
@@ -257,7 +255,7 @@ function parse( srcFile ) {
       continue;
     }
     if ( eatToken( "[" ) ) {
-      if ( !eatToken( "@" ) ) throw "!";
+      if ( !eatToken( "@" ) ) throw `Expected a reference, found ${ srcFile[ i ] } at ${ i }`;
       pushText( );
       tokens.push( { type: "from_stored", data: readUntil( "]" ) } );
       continue;
@@ -355,7 +353,7 @@ function parse( srcFile ) {
           currentFunctionTokens.push( token );
           currentFunctionTokens.push( { type: "paragraph_start", data: false } );
         } else {
-          throw "!";
+          throw `Unknown token type: ${ token.type }`;
         }
       }
     }

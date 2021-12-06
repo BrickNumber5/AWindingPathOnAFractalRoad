@@ -14,7 +14,7 @@ function compileFile( name, num = 0, max = 1 ) {
   const dotFileName = `./debug/${ name }.textgenerator.dot`;
   console.log( `Processing ${ name }          [${ num + 1 }/${ max }]` );
   console.log( `Reading ${ srcFileName }` );
-  const srcFile = fs.readFileSync( srcFileName ).toString( ).replace( /\r\n/g, "\n" );
+  const srcFile = fs.readFileSync( srcFileName ).toString( );
   console.log( `Compiling` );
   const { resFile, dotFile } = compile( name, srcFile );
   console.log( `Writing ${ resFileName }` );
@@ -133,73 +133,70 @@ function parse( srcFile ) {
     if ( r ) i += token.length;
     return r;
   }
+  function readUntil( token ) {
+    let str = "";
+    while ( i < srcFile.length && !eatToken( token ) ) {
+      str += srcFile[ i ];
+      i++;
+    }
+    return str;
+  }
+  function eatNewline( ) {
+    return eatToken( "\n" ) || eatToken( "\r\n" ) || eatToken( "\r" );
+  }
+  function readUntilNewline( ) {
+    let str = "";
+    while ( i < srcFile.length && !eatNewline( ) ) {
+      str += srcFile[ i ];
+      i++;
+    }
+    return str;
+  }
+  function readString( ) {
+    let str = "";
+    if ( srcFile[ i ] !== '"' ) throw `Expected '"', found ${ srcFile[ i ] } at ${ i }`;
+    i++;
+    while ( i < srcFile.length && srcFile[ i ] !== '"' ) {
+      if ( srcFile[ i ] === "\\" ) {
+        i++;
+      }
+      str += srcFile[ i ];
+      i++;
+    }
+    i++;
+    return str;
+  }
+  function readInteger( ) {
+    if ( !"123456789".includes( srcFile[ i ] ) ) throw `Expected an integer, found ${ srcFile[ i ] } at ${ i }`;
+    let n = "";
+    while ( "0123456789".includes( srcFile[ i ] ) ) {
+      n += srcFile[ i ];
+      i++;
+    }
+    return +n;
+  }
   while ( i < srcFile.length ) {
     if ( sol && eatToken( "# " ) ) {
-      if ( eatToken( "!" ) ) {
-        i++;
-        let title = "";
-        while ( i < srcFile.length && srcFile[ i ] !== "\n" ) {
-          title += srcFile[ i ];
-          i++;
-        }
-        i++;
-        tokens.push( { type: "title", data: title } );
-      } else if ( eatToken( '"' ) ) {
-        i++;
-        let comment = "";
-        while ( i < srcFile.length && srcFile[ i ] !== "\n" ) {
-          comment += srcFile[ i ];
-          i++;
-        }
-        i++;
-        tokens.push( { type: "comment", data: comment } );
+      if ( eatToken( "! " ) ) {
+        tokens.push( { type: "title", data: readUntilNewline( ) } );
+      } else if ( eatToken( '" ' ) ) {
+        tokens.push( { type: "comment", data: readUntilNewline( ) } );
       } else if ( eatToken( "@" ) ) {
-        let reference = "";
-        while ( i < srcFile.length && srcFile[ i ] !== "\n" ) {
-          reference += srcFile[ i ];
-          i++;
-        }
-        i++;
+        let reference = readUntilNewline( );
         tokens.push( { type: "reference", data: reference } );
-      } else if ( eatToken( "---\n" ) ) {
+      } else if ( eatToken( "---" ) && eatNewline( ) ) {
         tokens.push( { type: "next_page", data: false } );
-      } else if ( eatToken( "...\n" ) ) {
+      } else if ( eatToken( "..." ) && eatNewline( ) ) {
         tokens.push( { type: "next_page", data: true } );
       } else if ( eatToken( "-> @" ) ) {
-        let reference = "";
-        while ( i < srcFile.length && srcFile[ i ] !== "\n" ) {
-          reference += srcFile[ i ];
-          i++;
-        }
-        i++;
-        tokens.push( { type: "jump", data: reference } );
+        tokens.push( { type: "jump", data: readUntilNewline( ) } );
       } else if ( eatToken( "?-> @" ) ) {
-        let reference = "";
-        while ( i < srcFile.length && srcFile[ i ] !== "\n" ) {
-          reference += srcFile[ i ];
-          i++;
-        }
-        i++;
+        let reference = readUntilNewline( );
         let branches = [ ];
-        while ( srcFile[ i ] === " " && srcFile[ i + 1 ] === " " && srcFile[ i + 2 ] === '"' ) {
-          i += 3;
-          let label = "";
-          while ( i < srcFile.length && srcFile[ i ] !== '"' ) {
-            if ( srcFile[ i ] === "\\" ) {
-              i++;
-            }
-            label += srcFile[ i ];
-            i++;
-          }
-          i++;
+        while ( eatToken( '  ' ) ) {
+          let label = readString( );
           if ( !eatToken( " -> @" ) ) throw "!";
-          let ref = "";
-          while ( i < srcFile.length && srcFile[ i ] !== "\n" ) {
-            ref += srcFile[ i ];
-            i++;
-          }
-          i++;
-          branches.push( { choice: label, goesto: ref } );
+          branches.push( { choice: label, goesto: readUntilNewline( ) } );
         }
         tokens.push( { type: "conditional_jump", data: { reference, branches } } );
       } else {
@@ -207,76 +204,43 @@ function parse( srcFile ) {
       }
       continue;
     }
-    if ( srcFile[ i ] === "\n" ) {
+    if ( eatNewline( ) ) {
       sol = true;
-      i++;
-      if ( srcFile[ i ] === "\n" ) {
+      if ( eatNewline( ) ) {
         pushText( );
-        i++;
-        if ( srcFile[ i ] !== "#" ) {
-          tokens.push( { type: "next_paragraph" } );
-        }
+        if ( srcFile[ i ] !== "#" ) tokens.push( { type: "next_paragraph" } );
       }
       continue;
     }
-    if ( srcFile[ i ] === "*" ) {
+    if ( eatToken( "*" ) ) {
       bold = !bold;
       pushText( );
       tokens.push( { type: bold ? "bold_start" : "bold_end" } );
       sol = false;
-      i++;
       continue;
     }
-    if ( srcFile[ i ] === "/" ) {
+    if ( eatToken( "/" ) ) {
       ital = !ital;
       pushText( );
       tokens.push( { type: ital ? "italic_start" : "italic_end" } );
       sol = false;
-      i++;
       continue;
     }
-    if ( srcFile[ i ] === "_" ) {
+    if ( eatToken( "_" ) ) {
       pushText( );
       sol = false;
-      i++;
-      if ( srcFile[ i ] === "_" ) {
-        i++;
-        if ( srcFile[ i ] !== "@" ) throw "!";
-        i++;
-        let reference = "";
-        while ( i < srcFile.length && srcFile[ i ] !== ":" ) {
-          reference += srcFile[ i ];
-          i++;
-        }
-        if ( ![ '"', "1", "2", "3", "4", "5", "6", "7", "8", "9" ].includes( srcFile[ i + 1 ] ) ) throw "!";
-        if ( srcFile[ i + 1 ] === '"' ) {
+      if ( eatToken( "_" ) ) {
+        if ( !eatToken( "@" ) ) throw "!";
+        let reference = readUntil( ":" );
+        if ( !'"123456789'.includes( srcFile[ i ] ) ) throw "!";
+        if ( srcFile[ i ] === '"' ) {
           let labels = [ ];
-          do {
-            let label = "";
-            i += 2;
-            while ( i < srcFile.length && srcFile[ i ] !== '"' ) {
-              if ( srcFile[ i ] === "\\" ) {
-                i++;
-              }
-              label += srcFile[ i ];
-              i++;
-            }
-            i++;
-            labels.push( label );
-          } while ( srcFile[ i ] === "," );
-          if ( srcFile[ i ] !== "_" || srcFile[ i + 1 ] !== "_" ) throw "!";
-          i += 2;
+          do { labels.push( readString( ) ); } while ( eatToken( "," ) );
+          if ( !eatToken( "__" ) ) throw "!";
           tokens.push( { type: "blank_mc", data: { reference, options: labels } } );
         } else {
-          i++;
-          let n = "";
-          while ( "0123456789".includes( srcFile[ i ] ) ) {
-            n += srcFile[ i ];
-            i++;
-          }
-          n = +n;
-          if ( srcFile[ i ] !== "_" || srcFile[ i + 1 ] !== "_" ) throw "!";
-          i += 2;
+          let n = readInteger( );
+          if ( !eatToken( "__" ) ) throw "!";
           tokens.push( { type: "blank_sa", data: { reference, length: n } } );
         }
       } else {
@@ -285,50 +249,33 @@ function parse( srcFile ) {
       }
       continue;
     }
-    if ( srcFile[ i ] === "~" ) {
+    if ( eatToken( "~" ) ) {
       strk = !strk;
       pushText( );
       tokens.push( { type: strk ? "striked_start" : "striked_end" } );
       sol = false;
-      i++;
       continue;
     }
-    if ( srcFile[ i ] === "[" ) {
-      i++;
-      if ( srcFile[ i ] !== "@" ) throw "!";
-      i++;
-      let reference = "";
-      while ( i < srcFile.length && srcFile[ i ] !== "]" ) {
-        reference += srcFile[ i ];
-        i++;
-      }
-      i++;
+    if ( eatToken( "[" ) ) {
+      if ( !eatToken( "@" ) ) throw "!";
       pushText( );
-      tokens.push( { type: "from_stored", data: reference } );
+      tokens.push( { type: "from_stored", data: readUntil( "]" ) } );
       continue;
     }
-    if ( srcFile[ i ] === "{" ) {
-      i++;
+    if ( eatToken( "{" ) ) {
       pushText( );
       let numbrackets = 1, javascript = "";
       while ( i < srcFile.length ) {
-        if ( srcFile[ i ] === "{" ) {
-          numbrackets++;
-        }
-        if ( srcFile[ i ] === "}" ) {
-          numbrackets--;
-          if ( numbrackets === 0 ) break;
-        }
-        javascript += srcFile[ i ];
+        if ( srcFile[ i ] === "{" ) numbrackets++;
+        if ( srcFile[ i ] === "}" ) numbrackets--;
         i++;
+        if ( numbrackets === 0 ) break;
+        javascript += srcFile[ i - 1 ];
       }
-      i++;
       tokens.push( { type: "javascript", data: javascript } );
       continue;
     }
-    if ( srcFile[ i ] === "\\" ) {
-      i++;
-    }
+    eatToken( "\\" );
     txt += srcFile[ i ];
     sol = false;
     i++;

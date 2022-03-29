@@ -2,6 +2,8 @@ import * as template from "./template.textgenerator.js"
 
 const { TOKEN, makeTokens } = template;
 
+const globals = { };
+
 let blank = "", bin0 = "", bin1 = "", bin2 = "", bin3 = "", shortanswer = "", shortanswer2 = "", echotest = "", humannumber = "";
 
 function reset( ) {

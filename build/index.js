@@ -1,4 +1,4 @@
-import textgen from "./test.textgenerator.js";
+import textgen from "./chapter1.textgenerator.js";
 
 textgen.start( );
 

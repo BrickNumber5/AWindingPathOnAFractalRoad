@@ -1,0 +1,32 @@
+digraph chapter1 {
+  rankdir = "LR"
+  START -> route_up
+  START -> route_middle
+  START -> route_down
+  START -> END [style=dashed,color=gray]
+  route_up -> dp_yes
+  route_up -> dp_no0
+  route_up -> dp_no1
+  route_up -> dp_no2
+  route_up -> dp_no3
+  route_up -> dp_ask
+  route_up -> END [style=dashed,color=gray]
+  dp_yes -> dp_rejoin
+  dp_no0 -> dp_rejoin
+  dp_no1 -> dp_rejoin
+  dp_no2 -> dp_rejoin
+  dp_no3 -> dp_rejoin
+  dp_ask -> dp_rejoin
+  dp_rejoin -> END
+  route_middle -> dragon_strat_friend
+  route_middle -> END
+  dragon_strat_friend -> END
+  route_down -> cave_left
+  route_down -> cave_mid
+  route_down -> cave_right
+  route_down -> END [style=dashed,color=gray]
+  cave_left -> cave_again
+  cave_mid -> cave_again
+  cave_right -> END
+  cave_again -> END
+}

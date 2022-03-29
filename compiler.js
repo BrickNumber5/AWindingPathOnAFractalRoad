@@ -40,6 +40,8 @@ function compile( name, srcFile ) {
   res += 'import * as template from "./template.textgenerator.js"\n\n';
   res += "const { TOKEN, makeTokens } = template;\n\n";
   
+  res += "const globals = { };\n\n";
+  
   if ( parsed.variables.length > 0 ) {
     res += `let ${ parsed.variables.join( ' = "", ' ) } = "";\n\n`;
     res += `function reset( ) {\n  ${ parsed.variables.join( ' = "";\n  ' ) } = "";\n}\n\n`

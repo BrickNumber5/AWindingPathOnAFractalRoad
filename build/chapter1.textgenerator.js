@@ -740,7 +740,7 @@ function* cave_left( ) {
   yield TOKEN.PAGE_START;
   yield [ TOKEN.PARA_START, false ];
   yield [ TOKEN.TEXT, "I picked a book off the shelves. It's cover was a plain shade of " ];
-  yield* makeTokens( ( ( ) => { /* random color name */ } )( ) );
+  yield* makeTokens( ( ( ) => { let colors = [ "red", "orange", "yellow", "green", "blue", "indigo", "violet", "pink", "lavendar", "teal", "cyan", "magenta" ]; return colors[ Math.ceil( Math.random( ) * colors.length ) - 1 ]; } )( ) );
   yield [ TOKEN.TEXT, " and the title wriggled and morphed in front of me. One moment it read “The Grand Adventures of The World's Most Paradoxical Creature” and the next “The Optimal Meal Preparation Strategies for Undead Goats and Their Cook Staff.”" ];
   yield TOKEN.PARA_END;
   yield TOKEN.PAGE_END;
@@ -752,8 +752,39 @@ function* cave_left( ) {
   yield TOKEN.PAGE_START;
   yield [ TOKEN.PARA_START, false ];
   yield [ TOKEN.TEXT, "“" ];
-  yield* makeTokens( ( ( ) => { /* Text gen */ } )( ) );
-  yield [ TOKEN.TEXT, ",” it said." ];
+  yield* makeTokens( ( ( ) => { let vowels = "aeiouy";
+let softs = "mnwlh";
+let consonants = softs + "rtpsdfgjkzxcvb";
+
+let rand = str => str[ Math.ceil( str.length * Math.random( ) ) - 1 ];
+
+let particle = ( ) => rand( vowels );
+
+let CVN = ( ) => rand( consonants ) + rand( vowels ) + rand( softs );
+
+let CCVN = ( ) => rand( consonants ) + rand( consonants ) + rand( vowels ) + rand( softs );
+
+let capitalize = str => str.slice( 0, 1 ).toUpperCase( ) + str.slice( 1 );
+
+let word = ( ) => Math.random( ) > 0.2 ? CVN( ) : CCVN( );
+
+let noun = ( ) => Math.random( ) > 0.5 ? ( Math.random( ) > 0.65 ? capitalize( word( ) ) : word( ) ) : ( Math.random( ) > 0.65 ? capitalize( word( ) ) : word( ) ) + " " + word( );
+
+let verb = ( ) => Math.random( ) > 0.6 ? word( ) : particle( ) + " " + word( );
+
+let sentence = ( ) => Math.random( ) > 0.5 ? noun( ) + " " + verb( ) + " " + noun( ) : Math.random( ) > 0.6 ? sentence( ) + ", " + word( ) + " " + sentence( ) : word( ) + " " + sentence( ) + ", " + sentence( );
+
+let generate = ( ) => {
+  let str = "";
+  while ( str.length < 500 ) {
+    let nstr = capitalize( sentence( ) ) + ". ";
+    if ( str.length + nstr.length < 600 ) str += nstr;
+  }
+  return str;
+};
+
+return generate( ); } )( ) );
+  yield [ TOKEN.TEXT, "” it said. How insightful." ];
   yield TOKEN.PARA_END;
   yield TOKEN.PAGE_END;
   yield TOKEN.PAGE_START;

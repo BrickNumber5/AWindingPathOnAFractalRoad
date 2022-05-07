@@ -4,7 +4,7 @@ const { TOKEN, makeTokens } = template;
 
 const globals = { };
 
-let name = "", route_select = "", declares_pirate = "", genderish = "", dragon_strat = "", cave_passage = "";
+let name = "", route_select = "", declares_pirate = "", genderish = "", dragon_strat = "", cave_passage = "", cave_passage1 = "", cave_passage2 = "";
 
 function reset( ) {
   name = "";
@@ -13,6 +13,8 @@ function reset( ) {
   genderish = "";
   dragon_strat = "";
   cave_passage = "";
+  cave_passage1 = "";
+  cave_passage2 = "";
 }
 
 function* START( ) {
@@ -804,7 +806,82 @@ return generate( ); } )( ) );
   yield TOKEN.PAGE_END;
   yield TOKEN.PAGE_START;
   yield [ TOKEN.PARA_START, false ];
-  yield* cave_again( );
+  yield* cave_again_1( );
+  return TOKEN.END;
+}
+
+function* cave_left2( ) {
+  yield [ TOKEN.TEXT, "The passages got tighter and closer together as I slipped through them, but never to the point I was forced to turn around. At some point I stumbled upon a region that looked to be some kind of enormous library with books nestled into the walls. The library stretched for some distance but didn't appear to have any exits besides the one I came in through." ];
+  yield TOKEN.PARA_END;
+  yield TOKEN.PAGE_END;
+  yield TOKEN.PAGE_START;
+  yield [ TOKEN.PARA_START, false ];
+  yield [ TOKEN.TEXT, "I picked a book off the shelves. It's cover was a plain shade of " ];
+  yield* makeTokens( ( ( ) => { let colors = [ "red", "orange", "yellow", "green", "blue", "indigo", "violet", "pink", "lavendar", "teal", "cyan", "magenta" ]; return colors[ Math.ceil( Math.random( ) * colors.length ) - 1 ]; } )( ) );
+  yield [ TOKEN.TEXT, " and the title wriggled and morphed in front of me. One moment it read “The Grand Adventures of The World's Most Paradoxical Creature” and the next “The Optimal Meal Preparation Strategies for Undead Goats and Their Cook Staff.”" ];
+  yield TOKEN.PARA_END;
+  yield TOKEN.PAGE_END;
+  yield TOKEN.PAGE_START;
+  yield [ TOKEN.PARA_START, false ];
+  yield [ TOKEN.TEXT, "I flipped open the book to a random page, it was written in what might have been a language I didn't understand but that I suspected to be simply gibberish." ];
+  yield TOKEN.PARA_END;
+  yield TOKEN.PAGE_END;
+  yield TOKEN.PAGE_START;
+  yield [ TOKEN.PARA_START, false ];
+  yield [ TOKEN.TEXT, "“" ];
+  yield* makeTokens( ( ( ) => { let vowels = "aeiouy";
+let softs = "mnwlh";
+let consonants = softs + "rtpsdfgjkzxcvb";
+
+let rand = str => str[ Math.ceil( str.length * Math.random( ) ) - 1 ];
+
+let particle = ( ) => rand( vowels );
+
+let CVN = ( ) => rand( consonants ) + rand( vowels ) + rand( softs );
+
+let CCVN = ( ) => rand( consonants ) + rand( consonants ) + rand( vowels ) + rand( softs );
+
+let capitalize = str => str.slice( 0, 1 ).toUpperCase( ) + str.slice( 1 );
+
+let word = ( ) => Math.random( ) > 0.2 ? CVN( ) : CCVN( );
+
+let noun = ( ) => Math.random( ) > 0.5 ? ( Math.random( ) > 0.65 ? capitalize( word( ) ) : word( ) ) : ( Math.random( ) > 0.65 ? capitalize( word( ) ) : word( ) ) + " " + word( );
+
+let verb = ( ) => Math.random( ) > 0.6 ? word( ) : particle( ) + " " + word( );
+
+let sentence = ( ) => Math.random( ) > 0.5 ? noun( ) + " " + verb( ) + " " + noun( ) : Math.random( ) > 0.6 ? sentence( ) + ", " + word( ) + " " + sentence( ) : word( ) + " " + sentence( ) + ", " + sentence( );
+
+let generate = ( ) => {
+  let str = "";
+  while ( str.length < 500 ) {
+    let nstr = capitalize( sentence( ) ) + ". ";
+    if ( str.length + nstr.length < 600 ) str += nstr;
+  }
+  return str;
+};
+
+return generate( ); } )( ) );
+  yield [ TOKEN.TEXT, "” it said. How insightful." ];
+  yield TOKEN.PARA_END;
+  yield TOKEN.PAGE_END;
+  yield TOKEN.PAGE_START;
+  yield [ TOKEN.PARA_START, false ];
+  yield [ TOKEN.TEXT, "This too, seemed to change, but only slowly and when I wasn't paying attention." ];
+  yield TOKEN.PARA_END;
+  yield TOKEN.PAGE_END;
+  yield TOKEN.PAGE_START;
+  yield [ TOKEN.PARA_START, false ];
+  yield [ TOKEN.TEXT, "I put the book back and checked a few more. They all had the same strange properties." ];
+  yield TOKEN.PARA_END;
+  yield TOKEN.PAGE_END;
+  yield TOKEN.PAGE_START;
+  yield [ TOKEN.PARA_START, false ];
+  yield [ TOKEN.TEXT, "Deciding that there wasn't anything else to find there, I returned to the main cavern." ];
+  yield TOKEN.PARA_END;
+  yield TOKEN.PAGE_END;
+  yield TOKEN.PAGE_START;
+  yield [ TOKEN.PARA_START, false ];
+  yield* cave_again_3( );
   return TOKEN.END;
 }
 
@@ -871,7 +948,74 @@ function* cave_mid( ) {
   yield TOKEN.PAGE_END;
   yield TOKEN.PAGE_START;
   yield [ TOKEN.PARA_START, false ];
-  yield* cave_again( );
+  yield* cave_again_2( );
+  return TOKEN.END;
+}
+
+function* cave_mid2( ) {
+  yield [ TOKEN.TEXT, "As I traveled along it, I began to notice fragments of what looked to be glass, or else some brightly colored transparent gemstone, roughly the size of my hand embedded in the wall. As I went further the pieces of glass became more prevalent until the entire area seemed to be made only of glass and the light slowly grew brighter, although I still could not place the source." ];
+  yield TOKEN.PARA_END;
+  yield TOKEN.PAGE_END;
+  yield TOKEN.PAGE_START;
+  yield [ TOKEN.PARA_START, false ];
+  yield [ TOKEN.TEXT, "At the end of the passage, a large, thin, wall of lavender glass separated one end of the room from the other, preventing me from continuing." ];
+  yield TOKEN.PARA_END;
+  yield TOKEN.PAGE_END;
+  yield TOKEN.PAGE_START;
+  yield [ TOKEN.PARA_START, false ];
+  yield [ TOKEN.TEXT, "This was not the most interesting thing, however, as on the other side of this window stood Abby, looking intently at what appeared to be some sort of unusual golden pocket watch she held in her hand." ];
+  yield TOKEN.PARA_END;
+  yield TOKEN.PAGE_END;
+  yield TOKEN.PAGE_START;
+  yield [ TOKEN.PARA_START, false ];
+  yield [ TOKEN.TEXT, "“Abby!”" ];
+  yield TOKEN.PARA_END;
+  yield TOKEN.PAGE_END;
+  yield TOKEN.PAGE_START;
+  yield [ TOKEN.PARA_START, false ];
+  yield [ TOKEN.TEXT, "She looked up at me, “" ];
+  yield [ TOKEN.TEXT, name ];
+  yield [ TOKEN.TEXT, ", I'm glad you got my note.”" ];
+  yield TOKEN.PARA_END;
+  yield TOKEN.PAGE_END;
+  yield TOKEN.PAGE_START;
+  yield [ TOKEN.PARA_START, false ];
+  yield [ TOKEN.TEXT, "“Now that I'm here, can you explain to me what's going on?”" ];
+  yield TOKEN.PARA_END;
+  yield TOKEN.PAGE_END;
+  yield TOKEN.PAGE_START;
+  yield [ TOKEN.PARA_START, false ];
+  yield [ TOKEN.TEXT, "“No idea.”" ];
+  yield TOKEN.PARA_END;
+  yield TOKEN.PAGE_END;
+  yield TOKEN.PAGE_START;
+  yield [ TOKEN.PARA_START, false ];
+  yield [ TOKEN.TEXT, "“What's that you have in your hand?”" ];
+  yield TOKEN.PARA_END;
+  yield TOKEN.PAGE_END;
+  yield TOKEN.PAGE_START;
+  yield [ TOKEN.PARA_START, false ];
+  yield [ TOKEN.TEXT, "“I'm not sure, I think —” she looked at the object and began fiddling with one of its dials, “that it has something to do with —”" ];
+  yield TOKEN.PARA_END;
+  yield TOKEN.PAGE_END;
+  yield TOKEN.PAGE_START;
+  yield [ TOKEN.PARA_START, false ];
+  yield [ TOKEN.TEXT, "There was a flash of light and a roaring boom. Abby had vanished." ];
+  yield TOKEN.PARA_END;
+  yield TOKEN.PAGE_END;
+  yield TOKEN.PAGE_START;
+  yield [ TOKEN.PARA_START, false ];
+  yield [ TOKEN.TEXT, "“Of course, that's how that would work!”" ];
+  yield TOKEN.PARA_END;
+  yield TOKEN.PAGE_END;
+  yield TOKEN.PAGE_START;
+  yield [ TOKEN.PARA_START, false ];
+  yield [ TOKEN.TEXT, "There was no one to hear my scream. Defeated, I returned to the central area." ];
+  yield TOKEN.PARA_END;
+  yield TOKEN.PAGE_END;
+  yield TOKEN.PAGE_START;
+  yield [ TOKEN.PARA_START, false ];
+  yield* cave_again_3( );
   return TOKEN.END;
 }
 
@@ -896,11 +1040,48 @@ function* cave_right( ) {
   return TOKEN.END
 }
 
-function* cave_again( ) {
-  yield* makeTokens( ( ( ) => { /* Some sort of code to make it so you can head down the other cave routes after each one. Problem for future Ben, she's great at dealing with this kind of thing and won't be at all upset with me, I'm sure. :) */ } )( ) );
+function* cave_again_1( ) {
+  yield [ TOKEN.TEXT, "Back in the main cavern, I considered my options. After some pondering I took the " ];
+  yield [ TOKEN.BLANK_MC, [ "middle", "right" ], __$result => { cave_passage1 = __$result; }, ( ) => cave_passage1 ];
+  yield [ TOKEN.TEXT, " passage." ];
   yield TOKEN.PARA_END;
   yield TOKEN.PAGE_END;
-  return TOKEN.END
+  yield TOKEN.PAGE_START;
+  yield [ TOKEN.PARA_START, false ];
+  if ( cave_passage1 === "middle" ) {
+    yield* cave_mid2( );
+    return TOKEN.END;
+  } else if ( cave_passage1 === "right" ) {
+    yield* cave_right( );
+    return TOKEN.END;
+  } else {
+    return TOKEN.END;
+  }
+}
+
+function* cave_again_2( ) {
+  yield [ TOKEN.TEXT, "Back in the main cavern, I considered my options. After some pondering I took the " ];
+  yield [ TOKEN.BLANK_MC, [ "left", "right" ], __$result => { cave_passage2 = __$result; }, ( ) => cave_passage2 ];
+  yield [ TOKEN.TEXT, " passage." ];
+  yield TOKEN.PARA_END;
+  yield TOKEN.PAGE_END;
+  yield TOKEN.PAGE_START;
+  yield [ TOKEN.PARA_START, false ];
+  if ( cave_passage2 === "left" ) {
+    yield* cave_left2( );
+    return TOKEN.END;
+  } else if ( cave_passage2 === "right" ) {
+    yield* cave_right( );
+    return TOKEN.END;
+  } else {
+    return TOKEN.END;
+  }
+}
+
+function* cave_again_3( ) {
+  yield [ TOKEN.TEXT, "Having exausted the other two options, I took the final available passageway." ];
+  yield* cave_right( );
+  return TOKEN.END;
 }
 
 export default new template.TextGenerator( START, reset );

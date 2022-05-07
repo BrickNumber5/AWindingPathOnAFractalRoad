@@ -25,8 +25,16 @@ digraph chapter1 {
   route_down -> cave_mid
   route_down -> cave_right
   route_down -> END [style=dashed,color=gray]
-  cave_left -> cave_again
-  cave_mid -> cave_again
+  cave_left -> cave_again_1
+  cave_left2 -> cave_again_3
+  cave_mid -> cave_again_2
+  cave_mid2 -> cave_again_3
   cave_right -> END
-  cave_again -> END
+  cave_again_1 -> cave_mid2
+  cave_again_1 -> cave_right
+  cave_again_1 -> END [style=dashed,color=gray]
+  cave_again_2 -> cave_left2
+  cave_again_2 -> cave_right
+  cave_again_2 -> END [style=dashed,color=gray]
+  cave_again_3 -> cave_right
 }
